@@ -32,10 +32,14 @@ class InsightsState {
   }
 }
 
-class InsightsViewModel extends StateNotifier<InsightsState> {
-  final GeminiService _geminiService;
+class InsightsViewModel extends AutoDisposeNotifier<InsightsState> {
+  late final GeminiService _geminiService;
 
-  InsightsViewModel(this._geminiService) : super(InsightsState(status: InsightsStatus.idle));
+  @override
+  InsightsState build() {
+    _geminiService = locator<GeminiService>();
+    return InsightsState(status: InsightsStatus.idle);
+  }
 
   Future<void> generateInsights(List<Expense> expenses) async {
     if (expenses.isEmpty) {
@@ -65,6 +69,4 @@ class InsightsViewModel extends StateNotifier<InsightsState> {
   }
 }
 
-final insightsProvider = StateNotifierProvider.autoDispose<InsightsViewModel, InsightsState>((ref) {
-  return InsightsViewModel(locator<GeminiService>());
-});
+final insightsProvider = AutoDisposeNotifierProvider<InsightsViewModel, InsightsState>(InsightsViewModel.new);

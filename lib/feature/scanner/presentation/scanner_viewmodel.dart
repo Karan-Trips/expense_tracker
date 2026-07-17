@@ -38,11 +38,15 @@ class ScannerState {
   }
 }
 
-class ScannerViewModel extends StateNotifier<ScannerState> {
-  final GeminiService _geminiService;
+class ScannerViewModel extends AutoDisposeNotifier<ScannerState> {
+  late final GeminiService _geminiService;
   final ImagePicker _picker = ImagePicker();
 
-  ScannerViewModel(this._geminiService) : super(ScannerState(status: ScanStatus.idle));
+  @override
+  ScannerState build() {
+    _geminiService = locator<GeminiService>();
+    return ScannerState(status: ScanStatus.idle);
+  }
 
   Future<void> pickImage(ImageSource source) async {
     state = state.copyWith(status: ScanStatus.picking);
@@ -85,6 +89,4 @@ class ScannerViewModel extends StateNotifier<ScannerState> {
   }
 }
 
-final scannerProvider = StateNotifierProvider.autoDispose<ScannerViewModel, ScannerState>((ref) {
-  return ScannerViewModel(locator<GeminiService>());
-});
+final scannerProvider = AutoDisposeNotifierProvider<ScannerViewModel, ScannerState>(ScannerViewModel.new);

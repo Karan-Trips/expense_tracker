@@ -27,11 +27,15 @@ class ExpenseState {
   }
 }
 
-class ExpenseViewModel extends StateNotifier<ExpenseState> {
-  final ExpenseRepository _repository;
+class ExpenseViewModel extends AutoDisposeNotifier<ExpenseState> {
+  late final ExpenseRepository _repository;
 
-  ExpenseViewModel(this._repository) : super(ExpenseState(expenses: [])) {
-    loadExpenses();
+  @override
+  ExpenseState build() {
+    _repository = locator<ExpenseRepository>();
+    // Trigger initial loading on build
+    Future.microtask(() => loadExpenses());
+    return ExpenseState(expenses: []);
   }
 
   Future<void> loadExpenses() async {
@@ -72,6 +76,4 @@ class ExpenseViewModel extends StateNotifier<ExpenseState> {
   }
 }
 
-final expenseProvider = StateNotifierProvider.autoDispose<ExpenseViewModel, ExpenseState>((ref) {
-  return ExpenseViewModel(locator<ExpenseRepository>());
-});
+final expenseProvider = AutoDisposeNotifierProvider<ExpenseViewModel, ExpenseState>(ExpenseViewModel.new);
