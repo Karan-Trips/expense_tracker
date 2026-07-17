@@ -26,8 +26,8 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
   late final TextEditingController _amountController;
   late final TextEditingController _descController;
   
-  DateTime _selectedDate = DateTime.now();
-  ExpenseCategory _selectedCategory = ExpenseCategory.food;
+  final ValueNotifier<DateTime> _selectedDate = ValueNotifier<DateTime>(DateTime.now());
+  final ValueNotifier<ExpenseCategory> _selectedCategory = ValueNotifier<ExpenseCategory>(ExpenseCategory.food);
   bool _isEditing = false;
 
   @override
@@ -42,8 +42,8 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
     _descController = TextEditingController(text: widget.expense?.description ?? "");
     
     if (widget.expense != null) {
-      _selectedDate = widget.expense!.date;
-      _selectedCategory = widget.expense!.category;
+      _selectedDate.value = widget.expense!.date;
+      _selectedCategory.value = widget.expense!.category;
     }
   }
 
@@ -52,13 +52,15 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
     _titleController.dispose();
     _amountController.dispose();
     _descController.dispose();
+    _selectedDate.dispose();
+    _selectedCategory.dispose();
     super.dispose();
   }
 
   Future<void> _pickDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate,
+      initialDate: _selectedDate.value,
       firstDate: DateTime(2020),
       lastDate: DateTime.now().add(const Duration(days: 365)),
       builder: (context, child) {
@@ -76,9 +78,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
       },
     );
     if (picked != null) {
-      setState(() {
-        _selectedDate = picked;
-      });
+      _selectedDate.value = picked;
     }
   }
 
@@ -97,8 +97,8 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
           : const Uuid().v4(),
       title: title,
       amount: amount,
-      date: _selectedDate,
-      categoryIndex: _selectedCategory.index,
+      date: _selectedDate.value,
+      categoryIndex: _selectedCategory.value.index,
       description: description.isNotEmpty ? description : null,
       receiptImagePath: widget.expense?.receiptImagePath,
       createdAt: widget.expense?.createdAt ?? now,
@@ -111,7 +111,6 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
     } else {
       await viewModel.addExpense(newExpense);
     }
-
 
     if (mounted) {
       context.pop();
@@ -210,13 +209,18 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                               ),
                               Row(
                                 children: [
-                                  Text(
-                                    DateFormat('MMM dd, yyyy').format(_selectedDate),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15,
-                                    ),
+                                  ValueListenableBuilder<DateTime>(
+                                    valueListenable: _selectedDate,
+                                    builder: (context, selectedDate, _) {
+                                      return Text(
+                                        DateFormat('MMM dd, yyyy').format(selectedDate),
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 15,
+                                        ),
+                                      );
+                                    },
                                   ),
                                   const SizedBox(width: 8),
                                   const Icon(Icons.calendar_today, size: 16, color: AppColors.accentTeal),
@@ -252,20 +256,23 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                 ),
                 const SizedBox(height: 12),
                 // Category grid/wrap selection
-                Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: ExpenseCategory.values.map((cat) {
-                    return CategoryChip(
-                      category: cat,
-                      isSelected: _selectedCategory == cat,
-                      onTap: () {
-                        setState(() {
-                          _selectedCategory = cat;
-                        });
-                      },
+                ValueListenableBuilder<ExpenseCategory>(
+                  valueListenable: _selectedCategory,
+                  builder: (context, selectedCategory, _) {
+                    return Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: ExpenseCategory.values.map((cat) {
+                        return CategoryChip(
+                          category: cat,
+                          isSelected: selectedCategory == cat,
+                          onTap: () {
+                            _selectedCategory.value = cat;
+                          },
+                        );
+                      }).toList(),
                     );
-                  }).toList(),
+                  },
                 ),
                 const SizedBox(height: 48),
                 // Save Button

@@ -13,8 +13,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  String _statusText = "Starting AuraExpense...";
-  String? _errorText;
+  final ValueNotifier<String> _statusText = ValueNotifier("Starting AuraExpense...");
+  final ValueNotifier<String?> _errorText = ValueNotifier(null);
 
   @override
   void initState() {
@@ -22,24 +22,25 @@ class _SplashScreenState extends State<SplashScreen> {
     _initializeApp();
   }
 
+  @override
+  void dispose() {
+    _statusText.dispose();
+    _errorText.dispose();
+    super.dispose();
+  }
+
   Future<void> _initializeApp() async {
     try {
-      setState(() {
-        _statusText = "Loading Environment Configuration...";
-        _errorText = null;
-      });
+      _statusText.value = "Loading Environment Configuration...";
+      _errorText.value = null;
       // Load environment variables
       await dotenv.load(fileName: ".env");
 
-      setState(() {
-        _statusText = "Initializing Local Database...";
-      });
+      _statusText.value = "Initializing Local Database...";
       // Init Database
       await HiveHelper.init();
 
-      setState(() {
-        _statusText = "Injecting App Modules...";
-      });
+      _statusText.value = "Injecting App Modules...";
       // Set up GetIt DI
       await setupLocator();
 
@@ -50,9 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
         context.go('/home');
       }
     } catch (e) {
-      setState(() {
-        _errorText = e.toString();
-      });
+      _errorText.value = e.toString();
     }
   }
 
@@ -108,59 +107,71 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               const SizedBox(height: 48),
-              if (_errorText == null) ...[
-                const SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  _statusText,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 13,
-                  ),
-                ),
-              ] else ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                  child: Column(
-                    children: [
-                      const Icon(Icons.warning_amber_rounded, color: Colors.amberAccent, size: 40),
-                      const SizedBox(height: 12),
-                      Text(
-                        _errorText!,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.redAccent,
-                          fontSize: 14,
+              AnimatedBuilder(
+                animation: Listenable.merge([_statusText, _errorText]),
+                builder: (context, _) {
+                  final errorText = _errorText.value;
+                  final statusText = _statusText.value;
+
+                  if (errorText == null) {
+                    return Column(
+                      children: [
+                        const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 20),
-                      ElevatedButton.icon(
-                        onPressed: _initializeApp,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text("Retry"),
-                      ),
-                      const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: () {
-                          // Continue with error flagged (local DB offline or mockup only)
-                          context.go('/home');
-                        },
-                        child: const Text(
-                          "Skip & Continue Offline",
-                          style: TextStyle(color: AppColors.accentTeal),
+                        const SizedBox(height: 16),
+                        Text(
+                          statusText,
+                          style: const TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 13,
+                          ),
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              ]
+                      ],
+                    );
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Column(
+                        children: [
+                          const Icon(Icons.warning_amber_rounded, color: Colors.amberAccent, size: 40),
+                          const SizedBox(height: 12),
+                          Text(
+                            errorText,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 14,
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+                          ElevatedButton.icon(
+                            onPressed: _initializeApp,
+                            icon: const Icon(Icons.refresh),
+                            label: const Text("Retry"),
+                          ),
+                          const SizedBox(height: 8),
+                          TextButton(
+                            onPressed: () {
+                              // Continue with error flagged (local DB offline or mockup only)
+                              context.go('/home');
+                            },
+                            child: const Text(
+                              "Skip & Continue Offline",
+                              style: TextStyle(color: AppColors.accentTeal),
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ),

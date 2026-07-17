@@ -85,6 +85,6 @@ class ScannerViewModel extends StateNotifier<ScannerState> {
   }
 }
 
-final scannerProvider = StateNotifierProvider<ScannerViewModel, ScannerState>((ref) {
+final scannerProvider = StateNotifierProvider.autoDispose<ScannerViewModel, ScannerState>((ref) {
   return ScannerViewModel(locator<GeminiClient>());
 });

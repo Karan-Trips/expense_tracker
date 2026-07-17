@@ -7,7 +7,6 @@ import '../../../widgets/category_chip.dart';
 import '../../../widgets/expense_card.dart';
 import 'expense_viewmodel.dart';
 
-
 class ExpenseListScreen extends ConsumerStatefulWidget {
   const ExpenseListScreen({super.key});
 
@@ -16,12 +15,12 @@ class ExpenseListScreen extends ConsumerStatefulWidget {
 }
 
 class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
-  ExpenseCategory? _selectedCategory;
-  String _searchQuery = "";
+  final ValueNotifier<ExpenseCategory?> _selectedCategory = ValueNotifier<ExpenseCategory?>(null);
   final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
+    _selectedCategory.dispose();
     _searchController.dispose();
     super.dispose();
   }
@@ -29,21 +28,6 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
   @override
   Widget build(BuildContext context) {
     final expenseState = ref.watch(expenseProvider);
-    var filteredExpenses = expenseState.expenses;
-
-    // Apply Category Filter
-    if (_selectedCategory != null) {
-      filteredExpenses = filteredExpenses
-          .where((e) => e.categoryIndex == _selectedCategory!.index)
-          .toList();
-    }
-
-    // Apply Search Query Filter
-    if (_searchQuery.isNotEmpty) {
-      filteredExpenses = filteredExpenses
-          .where((e) => e.title.toLowerCase().contains(_searchQuery.toLowerCase()))
-          .toList();
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -63,75 +47,74 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
               // Search Input
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-                child: TextField(
-                  controller: _searchController,
-                  onChanged: (val) {
-                    setState(() {
-                      _searchQuery = val;
-                    });
+                child: AnimatedBuilder(
+                  animation: _searchController,
+                  builder: (context, _) {
+                    final query = _searchController.text;
+                    return TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+                        suffixIcon: query.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, color: AppColors.textSecondary),
+                                onPressed: () {
+                                  _searchController.clear();
+                                },
+                              )
+                            : null,
+                        hintText: "Search transactions...",
+                      ),
+                    );
                   },
-                  decoration: InputDecoration(
-                    prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
-                    suffixIcon: _searchQuery.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear, color: AppColors.textSecondary),
-                            onPressed: () {
-                              _searchController.clear();
-                              setState(() {
-                                _searchQuery = "";
-                              });
-                            },
-                          )
-                        : null,
-                    hintText: "Search transactions...",
-                  ),
                 ),
               ),
               // Category Filter list
               SizedBox(
                 height: 50,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  itemCount: ExpenseCategory.values.length + 1,
-                  itemBuilder: (context, index) {
-                    if (index == 0) {
-                      // "All" option
-                      final isSelected = _selectedCategory == null;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          label: const Text("All"),
-                          selected: isSelected,
-                          selectedColor: AppColors.accentTeal.withOpacity(0.2),
-                          backgroundColor: AppColors.surface,
-                          labelStyle: TextStyle(
-                            color: isSelected ? AppColors.accentTeal : AppColors.textSecondary,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                child: ValueListenableBuilder<ExpenseCategory?>(
+                  valueListenable: _selectedCategory,
+                  builder: (context, selectedCategory, _) {
+                    return ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      itemCount: ExpenseCategory.values.length + 1,
+                      itemBuilder: (context, index) {
+                        if (index == 0) {
+                          // "All" option
+                          final isSelected = selectedCategory == null;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: ChoiceChip(
+                              label: const Text("All"),
+                              selected: isSelected,
+                              selectedColor: AppColors.accentTeal.withOpacity(0.2),
+                              backgroundColor: AppColors.surface,
+                              labelStyle: TextStyle(
+                                color: isSelected ? AppColors.accentTeal : AppColors.textSecondary,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                              onSelected: (_) {
+                                _selectedCategory.value = null;
+                              },
+                            ),
+                          );
+                        }
+
+                        final cat = ExpenseCategory.values[index - 1];
+                        final isSelected = selectedCategory == cat;
+
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: CategoryChip(
+                            category: cat,
+                            isSelected: isSelected,
+                            onTap: () {
+                              _selectedCategory.value = isSelected ? null : cat;
+                            },
                           ),
-                          onSelected: (_) {
-                            setState(() {
-                              _selectedCategory = null;
-                            });
-                          },
-                        ),
-                      );
-                    }
-
-                    final cat = ExpenseCategory.values[index - 1];
-                    final isSelected = _selectedCategory == cat;
-
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: CategoryChip(
-                        category: cat,
-                        isSelected: isSelected,
-                        onTap: () {
-                          setState(() {
-                            _selectedCategory = isSelected ? null : cat;
-                          });
-                        },
-                      ),
+                        );
+                      },
                     );
                   },
                 ),
@@ -139,8 +122,30 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
               const SizedBox(height: 12),
               // History list
               Expanded(
-                child: filteredExpenses.isEmpty
-                    ? Center(
+                child: AnimatedBuilder(
+                  animation: Listenable.merge([_selectedCategory, _searchController]),
+                  builder: (context, _) {
+                    final query = _searchController.text.trim();
+                    final selectedCategory = _selectedCategory.value;
+
+                    var filteredExpenses = expenseState.expenses;
+
+                    // Apply Category Filter
+                    if (selectedCategory != null) {
+                      filteredExpenses = filteredExpenses
+                          .where((e) => e.categoryIndex == selectedCategory.index)
+                          .toList();
+                    }
+
+                    // Apply Search Query Filter
+                    if (query.isNotEmpty) {
+                      filteredExpenses = filteredExpenses
+                          .where((e) => e.title.toLowerCase().contains(query.toLowerCase()))
+                          .toList();
+                    }
+
+                    if (filteredExpenses.isEmpty) {
+                      return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
@@ -152,56 +157,60 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                             ),
                           ],
                         ),
-                      )
-                    : RefreshIndicator(
-                        color: AppColors.accentTeal,
-                        onRefresh: () => ref.read(expenseProvider.notifier).loadExpenses(),
-                        child: ListView.builder(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                          itemCount: filteredExpenses.length,
-                          itemBuilder: (context, index) {
-                            final expense = filteredExpenses[index];
+                      );
+                    }
 
-                            return Dismissible(
-                              key: Key(expense.id),
-                              direction: DismissDirection.endToStart,
-                              background: Container(
-                                alignment: Alignment.centerRight,
-                                padding: const EdgeInsets.only(right: 20.0),
-                                margin: const EdgeInsets.only(bottom: 12),
-                                decoration: BoxDecoration(
-                                  color: Colors.redAccent.withOpacity(0.2),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(color: Colors.redAccent.withOpacity(0.4)),
-                                ),
-                                child: const Icon(Icons.delete, color: Colors.redAccent),
+                    return RefreshIndicator(
+                      color: AppColors.accentTeal,
+                      onRefresh: () => ref.read(expenseProvider.notifier).loadExpenses(),
+                      child: ListView.builder(
+                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                        itemCount: filteredExpenses.length,
+                        itemBuilder: (context, index) {
+                          final expense = filteredExpenses[index];
+
+                          return Dismissible(
+                            key: Key(expense.id),
+                            direction: DismissDirection.endToStart,
+                            background: Container(
+                              alignment: Alignment.centerRight,
+                              padding: const EdgeInsets.only(right: 20.0),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: Colors.redAccent.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: Colors.redAccent.withOpacity(0.4)),
                               ),
-                              onDismissed: (direction) async {
-                                final notifier = ref.read(expenseProvider.notifier);
-                                final messenger = ScaffoldMessenger.of(context);
-                                await notifier.deleteExpense(expense.id);
+                              child: const Icon(Icons.delete, color: Colors.redAccent),
+                            ),
+                            onDismissed: (direction) async {
+                              final notifier = ref.read(expenseProvider.notifier);
+                              final messenger = ScaffoldMessenger.of(context);
+                              await notifier.deleteExpense(expense.id);
 
-                                messenger.showSnackBar(
-                                  SnackBar(
-                                    content: Text("Deleted ${expense.title}"),
-                                    action: SnackBarAction(
-                                      label: "Undo",
-                                      textColor: AppColors.accentTeal,
-                                      onPressed: () async {
-                                        await notifier.addExpense(expense);
-                                      },
-                                    ),
+                              messenger.showSnackBar(
+                                SnackBar(
+                                  content: Text("Deleted ${expense.title}"),
+                                  action: SnackBarAction(
+                                    label: "Undo",
+                                    textColor: AppColors.accentTeal,
+                                    onPressed: () async {
+                                      await notifier.addExpense(expense);
+                                    },
                                   ),
-                                );
-                              },
-                              child: ExpenseCard(
-                                expense: expense,
-                                onTap: () => context.push('/add-expense', extra: expense),
-                              ),
-                            );
-                          },
-                        ),
+                                ),
+                              );
+                            },
+                            child: ExpenseCard(
+                              expense: expense,
+                              onTap: () => context.push('/add-expense', extra: expense),
+                            ),
+                          );
+                        },
                       ),
+                    );
+                  },
+                ),
               ),
             ],
           ),

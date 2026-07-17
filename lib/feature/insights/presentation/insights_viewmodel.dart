@@ -65,6 +65,6 @@ class InsightsViewModel extends StateNotifier<InsightsState> {
   }
 }
 
-final insightsProvider = StateNotifierProvider<InsightsViewModel, InsightsState>((ref) {
+final insightsProvider = StateNotifierProvider.autoDispose<InsightsViewModel, InsightsState>((ref) {
   return InsightsViewModel(locator<GeminiClient>());
 });

@@ -72,6 +72,6 @@ class ExpenseViewModel extends StateNotifier<ExpenseState> {
   }
 }
 
-final expenseProvider = StateNotifierProvider<ExpenseViewModel, ExpenseState>((ref) {
+final expenseProvider = StateNotifierProvider.autoDispose<ExpenseViewModel, ExpenseState>((ref) {
   return ExpenseViewModel(locator<ExpenseRepository>());
 });

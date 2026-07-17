@@ -10,24 +10,29 @@ class GeminiClient {
   bool _isInitialized = false;
 
   void init() {
-    final apiKey = dotenv.env['GEMINI_API_KEY'];
-    if (apiKey == null || apiKey.isEmpty) {
-      throw const UnknownFailure('Gemini API Key is missing in the .env file. Please define GEMINI_API_KEY.');
-    }
-    
-    // Using gemini-1.5-flash for speed and vision capabilities
-    _visionModel = GenerativeModel(
-      model: 'gemini-1.5-flash',
-      apiKey: apiKey,
-      generationConfig: GenerationConfig(responseMimeType: 'application/json'),
-    );
+    try {
+      final apiKey = dotenv.env['GEMINI_API_KEY'];
+      if (apiKey == null || apiKey.isEmpty) {
+        throw const UnknownFailure('Gemini API Key is missing in the .env file. Please define GEMINI_API_KEY.');
+      }
+      
+      // Using gemini-1.5-flash for speed and vision capabilities
+      _visionModel = GenerativeModel(
+        model: 'gemini-1.5-flash',
+        apiKey: apiKey,
+        generationConfig: GenerationConfig(responseMimeType: 'application/json'),
+      );
 
-    _textModel = GenerativeModel(
-      model: 'gemini-1.5-flash',
-      apiKey: apiKey,
-    );
-    
-    _isInitialized = true;
+      _textModel = GenerativeModel(
+        model: 'gemini-1.5-flash',
+        apiKey: apiKey,
+      );
+      
+      _isInitialized = true;
+    } catch (e) {
+      if (e is Failure) rethrow;
+      throw UnknownFailure('Failed to initialize Gemini Client: ${e.toString()}');
+    }
   }
 
   Future<Map<String, dynamic>> scanReceipt(Uint8List imageBytes, String mimeType) async {
