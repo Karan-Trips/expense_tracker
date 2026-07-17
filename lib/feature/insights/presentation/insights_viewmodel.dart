@@ -33,9 +33,9 @@ class InsightsState {
 }
 
 class InsightsViewModel extends StateNotifier<InsightsState> {
-  final GeminiService _geminiClient;
+  final GeminiService _geminiService;
 
-  InsightsViewModel(this._geminiClient) : super(InsightsState(status: InsightsStatus.idle));
+  InsightsViewModel(this._geminiService) : super(InsightsState(status: InsightsStatus.idle));
 
   Future<void> generateInsights(List<Expense> expenses) async {
     if (expenses.isEmpty) {
@@ -57,7 +57,7 @@ class InsightsViewModel extends StateNotifier<InsightsState> {
       }).toList();
 
       final jsonStr = jsonEncode(mappedList);
-      final report = await _geminiClient.generateSpendingInsights(jsonStr);
+      final report = await _geminiService.generateSpendingInsights(jsonStr);
       state = state.copyWith(status: InsightsStatus.success, reportMarkdown: report);
     } catch (e) {
       state = state.copyWith(status: InsightsStatus.error, errorMessage: e.toString());

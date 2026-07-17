@@ -39,10 +39,10 @@ class ScannerState {
 }
 
 class ScannerViewModel extends StateNotifier<ScannerState> {
-  final GeminiService _geminiClient;
+  final GeminiService _geminiService;
   final ImagePicker _picker = ImagePicker();
 
-  ScannerViewModel(this._geminiClient) : super(ScannerState(status: ScanStatus.idle));
+  ScannerViewModel(this._geminiService) : super(ScannerState(status: ScanStatus.idle));
 
   Future<void> pickImage(ImageSource source) async {
     state = state.copyWith(status: ScanStatus.picking);
@@ -73,7 +73,7 @@ class ScannerViewModel extends StateNotifier<ScannerState> {
     state = state.copyWith(status: ScanStatus.scanning);
     try {
       final mimeType = state.imagePath?.endsWith('.png') == true ? 'image/png' : 'image/jpeg';
-      final result = await _geminiClient.scanReceipt(bytes, mimeType);
+      final result = await _geminiService.scanReceipt(bytes, mimeType);
       state = state.copyWith(status: ScanStatus.success, extractedData: result);
     } catch (e) {
       state = state.copyWith(status: ScanStatus.error, errorMessage: e.toString());
