@@ -46,7 +46,10 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
             children: [
               // Search Input
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: ScreenUtils.margin,
+                  vertical: ScreenUtils.spacingStandardControl,
+                ),
                 child: AnimatedBuilder(
                   animation: _searchController,
                   builder: (context, _) {
@@ -77,14 +80,14 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                   builder: (context, selectedCategory, _) {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                      padding: const EdgeInsets.symmetric(horizontal: ScreenUtils.margin),
                       itemCount: ExpenseCategory.values.length + 1,
                       itemBuilder: (context, index) {
                         if (index == 0) {
                           // "All" option
                           final isSelected = selectedCategory == null;
                           return Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
+                            padding: const EdgeInsets.only(right: ScreenUtils.spacingStandardControl),
                             child: ChoiceChip(
                               label: const Text("All"),
                               selected: isSelected,
@@ -105,7 +108,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                         final isSelected = selectedCategory == cat;
 
                         return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: const EdgeInsets.only(right: ScreenUtils.spacingStandardControl),
                           child: CategoryChip(
                             category: cat,
                             isSelected: isSelected,
@@ -119,7 +122,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: ScreenUtils.spacingControl),
               // History list
               Expanded(
                 child: AnimatedBuilder(
@@ -164,7 +167,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                       color: AppColors.accentTeal,
                       onRefresh: () => ref.read(expenseProvider.notifier).loadExpenses(),
                       child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                        padding: const EdgeInsets.fromLTRB(ScreenUtils.margin, 0, ScreenUtils.margin, 100),
                         itemCount: filteredExpenses.length,
                         itemBuilder: (context, index) {
                           final expense = filteredExpenses[index];
@@ -175,10 +178,10 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                             background: Container(
                               alignment: Alignment.centerRight,
                               padding: const EdgeInsets.only(right: 20.0),
-                              margin: const EdgeInsets.only(bottom: 12),
+                              margin: const EdgeInsets.only(bottom: ScreenUtils.spacingControl),
                               decoration: BoxDecoration(
                                 color: Colors.redAccent.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(16),
+                                borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
                                 border: Border.all(color: Colors.redAccent.withOpacity(0.4)),
                               ),
                               child: const Icon(Icons.delete, color: Colors.redAccent),

@@ -42,6 +42,7 @@ dependencies:
   fl_chart: ^0.70.2              # Data visualization
   intl: ^0.20.1                  # Formatting dates/currency
   uuid: ^4.5.1                   # Unique IDs
+  flutter_screenutil: ^5.9.3     # Responsive sizing and text scaling
 
 dev_dependencies:
   flutter_test:

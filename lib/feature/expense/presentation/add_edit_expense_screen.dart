@@ -142,11 +142,11 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
           child: Form(
             key: _formKey,
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
+              padding: const EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
               children: [
                 FrostedCard(
                   opacity: 0.1,
-                  borderRadius: 20,
+                  borderRadius: ScreenUtils.kBorderRadius,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -165,7 +165,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: ScreenUtils.spacingStander),
                       // Amount input
                       TextFormField(
                         controller: _amountController,
@@ -188,16 +188,16 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: ScreenUtils.spacingStander),
                       // Date Picker Box
                       InkWell(
                         onTap: _pickDate,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
                           decoration: BoxDecoration(
                             color: AppColors.surface.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
                             border: Border.all(color: AppColors.border),
                           ),
                           child: Row(
@@ -205,7 +205,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                             children: [
                               const Text(
                                 "Date",
-                                style: TextStyle(color: AppColors.textSecondary, fontSize: 15),
+                                style: TextStyle(color: AppColors.textSecondary, fontSize: ScreenUtils.fontTextSmall),
                               ),
                               Row(
                                 children: [
@@ -217,12 +217,12 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                                         style: const TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 15,
+                                          fontSize: ScreenUtils.fontTextSmall,
                                         ),
                                       );
                                     },
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: ScreenUtils.fieldSpace),
                                   const Icon(Icons.calendar_today, size: 16, color: AppColors.accentTeal),
                                 ],
                               ),
@@ -230,7 +230,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: ScreenUtils.spacingStander),
                       // Description input
                       TextFormField(
                         controller: _descController,
@@ -244,24 +244,24 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: ScreenUtils.spacingStander),
                 // Category header
                 const Text(
                   "Select Category",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 15,
+                    fontSize: ScreenUtils.fontTextSmall,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: ScreenUtils.spacingControl),
                 // Category grid/wrap selection
                 ValueListenableBuilder<ExpenseCategory>(
                   valueListenable: _selectedCategory,
                   builder: (context, selectedCategory, _) {
                     return Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
+                      spacing: ScreenUtils.fieldSpace,
+                      runSpacing: ScreenUtils.fieldSpace,
                       children: ExpenseCategory.values.map((cat) {
                         return CategoryChip(
                           category: cat,
@@ -278,9 +278,6 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                 // Save Button
                 ElevatedButton(
                   onPressed: _saveForm,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
                   child: Text(_isEditing ? "UPDATE TRANSACTION" : "SAVE TRANSACTION"),
                 ),
               ],

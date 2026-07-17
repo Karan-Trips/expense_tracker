@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/api/gemini_client.dart';
+import '../../../core/services/gemini_service.dart';
 import '../../../core/locator/locator.dart';
 import '../../expense/domain/expense.dart';
 
@@ -33,7 +33,7 @@ class InsightsState {
 }
 
 class InsightsViewModel extends StateNotifier<InsightsState> {
-  final GeminiClient _geminiClient;
+  final GeminiService _geminiClient;
 
   InsightsViewModel(this._geminiClient) : super(InsightsState(status: InsightsStatus.idle));
 
@@ -66,5 +66,5 @@ class InsightsViewModel extends StateNotifier<InsightsState> {
 }
 
 final insightsProvider = StateNotifierProvider.autoDispose<InsightsViewModel, InsightsState>((ref) {
-  return InsightsViewModel(locator<GeminiClient>());
+  return InsightsViewModel(locator<GeminiService>());
 });

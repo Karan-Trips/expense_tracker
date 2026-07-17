@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../core/api/gemini_client.dart';
+import '../../../core/services/gemini_service.dart';
 import '../../../core/locator/locator.dart';
 
 enum ScanStatus { idle, picking, scanning, success, error }
@@ -39,7 +39,7 @@ class ScannerState {
 }
 
 class ScannerViewModel extends StateNotifier<ScannerState> {
-  final GeminiClient _geminiClient;
+  final GeminiService _geminiClient;
   final ImagePicker _picker = ImagePicker();
 
   ScannerViewModel(this._geminiClient) : super(ScannerState(status: ScanStatus.idle));
@@ -86,5 +86,5 @@ class ScannerViewModel extends StateNotifier<ScannerState> {
 }
 
 final scannerProvider = StateNotifierProvider.autoDispose<ScannerViewModel, ScannerState>((ref) {
-  return ScannerViewModel(locator<GeminiClient>());
+  return ScannerViewModel(locator<GeminiService>());
 });

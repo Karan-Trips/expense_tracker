@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import '../error/failures.dart';
 
-class GeminiClient {
+class GeminiService {
   late final GenerativeModel _visionModel;
   late final GenerativeModel _textModel;
   bool _isInitialized = false;
@@ -35,7 +36,19 @@ class GeminiClient {
     }
   }
 
+  Future<void> _checkInternetSafety() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isEmpty || result[0].rawAddress.isEmpty) {
+        throw const NetworkFailure('No internet connection detected. Please check your connectivity and try again.');
+      }
+    } on SocketException catch (_) {
+      throw const NetworkFailure('No internet connection detected. Please check your connectivity and try again.');
+    }
+  }
+
   Future<Map<String, dynamic>> scanReceipt(Uint8List imageBytes, String mimeType) async {
+    await _checkInternetSafety();
     if (!_isInitialized) init();
 
     const prompt = '''
@@ -83,6 +96,7 @@ class GeminiClient {
   }
 
   Future<String> generateSpendingInsights(String expensesJson) async {
+    await _checkInternetSafety();
     if (!_isInitialized) init();
 
     final prompt = '''

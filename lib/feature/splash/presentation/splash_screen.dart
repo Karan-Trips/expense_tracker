@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/db/hive_helper.dart';
+import '../../../core/services/db_service.dart';
 import '../../../core/locator/locator.dart';
 import '../../../core/constant/app_colors.dart';
 
@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       _statusText.value = "Initializing Local Database...";
       // Init Database
-      await HiveHelper.init();
+      await DbService.init();
 
       _statusText.value = "Injecting App Modules...";
       // Set up GetIt DI
@@ -86,22 +86,22 @@ class _SplashScreenState extends State<SplashScreen> {
                   color: AppColors.accentTeal,
                 ),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: ScreenUtils.margin),
               const Text(
                 "A U R A",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 28,
+                  fontSize: ScreenUtils.fontTextTitle,
                   fontWeight: FontWeight.w900,
                   letterSpacing: 8,
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: ScreenUtils.spacingStandardControl),
               const Text(
                 "AI EXPENSE TRACKER",
                 style: TextStyle(
                   color: AppColors.textSecondary,
-                  fontSize: 12,
+                  fontSize: ScreenUtils.fontTextSmaller,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 3,
                 ),
@@ -124,12 +124,12 @@ class _SplashScreenState extends State<SplashScreen> {
                             valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: ScreenUtils.spacingStander),
                         Text(
                           statusText,
                           style: const TextStyle(
                             color: AppColors.textSecondary,
-                            fontSize: 13,
+                            fontSize: ScreenUtils.fontTextSmall,
                           ),
                         ),
                       ],
@@ -140,13 +140,13 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Column(
                         children: [
                           const Icon(Icons.warning_amber_rounded, color: Colors.amberAccent, size: 40),
-                          const SizedBox(height: 12),
+                          const SizedBox(height: ScreenUtils.spacingControl),
                           Text(
                             errorText,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Colors.redAccent,
-                              fontSize: 14,
+                              fontSize: ScreenUtils.fontTextSmall,
                             ),
                           ),
                           const SizedBox(height: 20),

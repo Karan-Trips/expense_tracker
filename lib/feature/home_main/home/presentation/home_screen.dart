@@ -39,7 +39,7 @@ class HomeScreen extends ConsumerWidget {
             color: AppColors.accentTeal,
             onRefresh: () => ref.read(expenseProvider.notifier).loadExpenses(),
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
+              padding: const EdgeInsets.fromLTRB(ScreenUtils.margin, ScreenUtils.margin, ScreenUtils.margin, 100),
               children: [
                 // Custom Header
                 Row(
@@ -52,7 +52,7 @@ class HomeScreen extends ConsumerWidget {
                           "Welcome Back",
                           style: TextStyle(
                             color: AppColors.textSecondary,
-                            fontSize: 14,
+                            fontSize: ScreenUtils.fontTextSmall,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -61,7 +61,7 @@ class HomeScreen extends ConsumerWidget {
                           "Aura Tracker",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 22,
+                            fontSize: ScreenUtils.fontTextBig,
                             fontWeight: FontWeight.w900,
                           ),
                         ),
@@ -74,19 +74,19 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: ScreenUtils.margin),
                 // Frosted summary card
                 FrostedCard(
                   opacity: 0.12,
                   blur: 25,
-                  borderRadius: 24,
+                  borderRadius: ScreenUtils.kBorderRadius,
                   child: Column(
                     children: [
                       const Text(
                         "TOTAL SPENDING THIS MONTH",
                         style: TextStyle(
                           color: AppColors.textSecondary,
-                          fontSize: 11,
+                          fontSize: ScreenUtils.fontTextTiny,
                           fontWeight: FontWeight.bold,
                           letterSpacing: 1.5,
                         ),
@@ -96,7 +96,7 @@ class HomeScreen extends ConsumerWidget {
                         formattedTotal,
                         style: const TextStyle(
                           color: Colors.white,
-                          fontSize: 36,
+                          fontSize: ScreenUtils.fontTextTitle,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -133,7 +133,7 @@ class HomeScreen extends ConsumerWidget {
                       "Category Share",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: ScreenUtils.fontText,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -142,7 +142,7 @@ class HomeScreen extends ConsumerWidget {
                         "All time",
                         style: TextStyle(
                           color: AppColors.textSecondary,
-                          fontSize: 12,
+                          fontSize: ScreenUtils.fontTextSmaller,
                         ),
                       ),
                   ],
@@ -159,7 +159,7 @@ class HomeScreen extends ConsumerWidget {
                       "Recent Transactions",
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 16,
+                        fontSize: ScreenUtils.fontText,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -167,7 +167,7 @@ class HomeScreen extends ConsumerWidget {
                       onPressed: () => context.go('/expenses'),
                       child: const Text(
                         "See All",
-                        style: TextStyle(color: AppColors.accentTeal, fontSize: 13),
+                        style: TextStyle(color: AppColors.accentTeal, fontSize: ScreenUtils.fontTextSmall),
                       ),
                     ),
                   ],
@@ -178,7 +178,7 @@ class HomeScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: AppColors.surface.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(ScreenUtils.kBorderRadius),
                       border: Border.all(color: AppColors.border),
                     ),
                     child: const Center(

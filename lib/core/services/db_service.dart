@@ -2,7 +2,7 @@ import 'package:hive_ce_flutter/hive_flutter.dart';
 import '../../feature/expense/domain/expense.dart';
 import '../error/failures.dart';
 
-class HiveHelper {
+class DbService {
   static const String expensesBoxName = 'expenses_box';
 
   static Future<void> init() async {

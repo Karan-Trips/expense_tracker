@@ -16,8 +16,8 @@ class FrostedCard extends StatelessWidget {
     required this.child,
     this.blur = 15.0,
     this.opacity = 0.08,
-    this.borderRadius = 16.0,
-    this.padding = const EdgeInsets.all(16.0),
+    this.borderRadius = ScreenUtils.cardCircularRadius,
+    this.padding = const EdgeInsets.all(ScreenUtils.margin),
     this.margin,
     this.borderColor,
   });
