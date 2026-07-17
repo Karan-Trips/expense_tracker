@@ -1,0 +1,266 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../core/constant/app_colors.dart';
+import '../../../core/constant/app_constants.dart';
+import '../../../widgets/frosted_card.dart';
+import '../../../widgets/loading_overlay.dart';
+import '../../expense/domain/expense.dart';
+import 'scanner_viewmodel.dart';
+
+class ReceiptScannerScreen extends ConsumerWidget {
+  const ReceiptScannerScreen({super.key});
+
+  void _onScanSuccess(BuildContext context, Map<String, dynamic> data) {
+    // Parse merchant title
+    final String merchant = data['merchant'] ?? "Unknown Merchant";
+    
+    // Parse amount safely
+    double amount = 0.00;
+    if (data['amount'] != null) {
+      amount = double.tryParse(data['amount'].toString()) ?? 0.00;
+    }
+
+    // Parse date safely
+    DateTime parsedDate = DateTime.now();
+    if (data['date'] != null) {
+      try {
+        parsedDate = DateTime.parse(data['date'].toString());
+      } catch (_) {}
+    }
+
+    // Parse category
+    ExpenseCategory category = ExpenseCategory.others;
+    if (data['category'] != null) {
+      final catStr = data['category'].toString().toLowerCase().trim();
+      category = ExpenseCategory.values.firstWhere(
+        (c) => c.name == catStr,
+        orElse: () => ExpenseCategory.others,
+      );
+    }
+
+    // Parse description
+    final String? description = data['description'];
+
+    // Create a draft expense
+    final draftExpense = Expense(
+      id: '', // Blank represents new item draft
+      title: merchant,
+      amount: amount,
+      date: parsedDate,
+      categoryIndex: category.index,
+      description: description,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+
+    // Navigate to AddEdit screen with pre-filled details
+    context.push('/add-expense', extra: draftExpense);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final scanState = ref.watch(scannerProvider);
+    final notifier = ref.read(scannerProvider.notifier);
+
+    // Listen for success status to navigate
+    ref.listen<ScannerState>(scannerProvider, (previous, next) {
+      if (next.status == ScanStatus.success && next.extractedData != null) {
+        _onScanSuccess(context, next.extractedData!);
+        notifier.reset(); // Reset to idle state after navigation
+      }
+    });
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("AI Receipt Scanner"),
+      ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.background, Color(0xFF0D0D1F)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: SafeArea(
+              child: ListView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
+                children: [
+                  const Text(
+                    "Quick Entry with Gemini AI",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  const Text(
+                    "Take a picture of any receipt or upload it from your gallery. Gemini will extract the details for you to verify.",
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  
+                  // Image Display Area
+                  if (scanState.imagePath != null)
+                    Column(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            height: 300,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.border),
+                            ),
+                            child: Image.file(
+                              File(scanState.imagePath!),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton.icon(
+                                onPressed: notifier.reset,
+                                icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                                label: const Text("Clear Image", style: TextStyle(color: Colors.redAccent)),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: ElevatedButton.icon(
+                                onPressed: () => notifier.scanReceipt(),
+                                icon: const Icon(Icons.auto_awesome),
+                                label: const Text("Scan Receipt"),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    )
+                  else
+                    // Selection Options (Frosted Card)
+                    FrostedCard(
+                      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+                      child: Column(
+                        children: [
+                          const Icon(
+                            Icons.receipt_long,
+                            size: 64,
+                            color: AppColors.accentTeal,
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "Select receipt image source",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildSourceButton(
+                                icon: Icons.camera_alt,
+                                label: "Camera",
+                                onTap: () => notifier.pickImage(ImageSource.camera),
+                              ),
+                              _buildSourceButton(
+                                icon: Icons.photo_library,
+                                label: "Gallery",
+                                onTap: () => notifier.pickImage(ImageSource.gallery),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  
+                  if (scanState.status == ScanStatus.error && scanState.errorMessage != null) ...[
+                    const SizedBox(height: 24),
+                    FrostedCard(
+                      borderColor: Colors.redAccent.withOpacity(0.4),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: const [
+                              Icon(Icons.error_outline, color: Colors.redAccent, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                "Scanning Failed",
+                                style: TextStyle(
+                                  color: Colors.redAccent,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            scanState.errorMessage!,
+                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+          
+          // Full screen loading indicator
+          if (scanState.status == ScanStatus.scanning)
+            const LoadingOverlay(message: "Gemini is analyzing your receipt..."),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSourceButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          children: [
+            Icon(icon, size: 28, color: AppColors.accentTeal),
+            const SizedBox(height: 8),
+            Text(
+              label,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
