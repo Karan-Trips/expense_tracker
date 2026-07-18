@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:intl/intl.dart';
 import '../core/constant/app_colors.dart';
 import '../core/constant/app_constants.dart';
@@ -32,66 +32,60 @@ class CategoryPieChart extends StatelessWidget {
       grandTotal += exp.amount;
     }
 
-    final List<PieChartSectionData> sections = [];
+    final List<_PieData> pieData = [];
     totals.forEach((category, amount) {
-      final percentage = grandTotal > 0
-          ? (amount / grandTotal * 100).toStringAsFixed(1)
-          : '0';
-      sections.add(
-        PieChartSectionData(
-          color: AppConstants.getCategoryColor(category),
-          value: amount,
-          title: '$percentage%',
-          radius: 35,
-          showTitle: true,
-          titleStyle: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ),
-      );
+      final name = AppConstants.getCategoryName(category);
+      final color = AppConstants.getCategoryColor(category);
+      pieData.add(_PieData(name, amount, color));
     });
 
     return Column(
       children: [
         SizedBox(
           height: 180,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              PieChart(
-                PieChartData(
-                  sections: sections,
-                  centerSpaceRadius: 55,
-                  sectionsSpace: 3,
+          child: SfCircularChart(
+            margin: EdgeInsets.zero,
+            annotations: <CircularChartAnnotation>[
+              CircularChartAnnotation(
+                widget: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "TOTAL",
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      NumberFormat.simpleCurrency(
+                        decimalDigits: 0,
+                      ).format(grandTotal),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "TOTAL",
-                    style: TextStyle(
-                      color: AppColors.textSecondary,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    NumberFormat.simpleCurrency(
-                      decimalDigits: 0,
-                    ).format(grandTotal),
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ],
-              ),
+            ],
+            series: <CircularSeries>[
+              DoughnutSeries<_PieData, String>(
+                dataSource: pieData,
+                xValueMapper: (_PieData data, _) => data.categoryName,
+                yValueMapper: (_PieData data, _) => data.amount,
+                pointColorMapper: (_PieData data, _) => data.color,
+                innerRadius: '72%',
+                radius: '90%',
+                dataLabelSettings: const DataLabelSettings(
+                  isVisible: false,
+                ),
+              )
             ],
           ),
         ),
@@ -163,164 +157,105 @@ class MonthlyBarChart extends StatelessWidget {
       }
     }
 
-    // Calculate dynamic maxY
+    // Calculate dynamic Y-axis maximum
     final double maxVal = monthlySums.values.isNotEmpty
         ? monthlySums.values.reduce((a, b) => a > b ? a : b)
         : 0.0;
     final double maxY = maxVal > 0 ? (maxVal * 1.25) : 100.0;
 
-    final List<BarChartGroupData> barGroups = [];
     final List<int> last6Months = [];
     for (int i = 5; i >= 0; i--) {
       final targetDate = DateTime(now.year, now.month - i, 1);
       last6Months.add(targetDate.month);
     }
 
+    final List<String> monthNames = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    final List<_BarData> barData = [];
     for (int idx = 0; idx < last6Months.length; idx++) {
       final m = last6Months[idx];
       final amount = monthlySums[m] ?? 0.0;
-      barGroups.add(
-        BarChartGroupData(
-          x: idx,
-          barRods: [
-            BarChartRodData(
-              toY: amount,
-              gradient: const LinearGradient(
-                colors: [AppColors.accentTeal, AppColors.accentPurple],
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-              ),
-              width: 14,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ],
-        ),
-      );
+      final label = monthNames[m - 1];
+      barData.add(_BarData(label, amount));
     }
-
-    final List<String> monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
 
     return SizedBox(
       height: 200,
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceAround,
-          maxY: maxY,
-          barTouchData: BarTouchData(
-            enabled: true,
-            touchTooltipData: BarTouchTooltipData(
-              tooltipRoundedRadius: 8,
-              tooltipPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
-              ),
-              tooltipMargin: 8,
-              tooltipBorder: const BorderSide(
-                color: AppColors.border,
-                width: 1,
-              ),
-              getTooltipColor: (group) => AppColors.surface.withOpacity(0.95),
-              getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                return BarTooltipItem(
-                  NumberFormat.simpleCurrency(decimalDigits: 0).format(rod.toY),
-                  const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                );
-              },
-            ),
+      child: SfCartesianChart(
+        plotAreaBorderWidth: 0,
+        margin: EdgeInsets.zero,
+        primaryXAxis: const CategoryAxis(
+          majorGridLines: MajorGridLines(width: 0),
+          axisLine: AxisLine(width: 0),
+          labelStyle: TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
           ),
-          titlesData: FlTitlesData(
-            show: true,
-            bottomTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                getTitlesWidget: (double value, TitleMeta meta) {
-                  final int idx = value.toInt();
-                  if (idx >= 0 && idx < last6Months.length) {
-                    final monthNum = last6Months[idx];
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 8.0),
-                      child: Text(
-                        monthNames[monthNum - 1],
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  }
-                  return const Text('');
-                },
-              ),
-            ),
-            leftTitles: AxisTitles(
-              sideTitles: SideTitles(
-                showTitles: true,
-                reservedSize: 40,
-                interval: maxY / 4,
-                getTitlesWidget: (double value, TitleMeta meta) {
-                  if (value == 0 || value == maxY) {
-                    return const SizedBox();
-                  }
-                  String formatted = '';
-                  if (value >= 1000) {
-                    formatted = '\$${(value / 1000).toStringAsFixed(0)}K';
-                  } else {
-                    formatted = '\$${value.toStringAsFixed(0)}';
-                  }
-                  return SideTitleWidget(
-                    meta: meta,
-                    space: 4,
-                    child: Text(
-                      formatted,
-                      style: const TextStyle(
-                        color: AppColors.textSecondary,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-            rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-            topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
-            ),
-          ),
-          gridData: FlGridData(
-            show: true,
-            drawVerticalLine: false,
-            horizontalInterval: maxY / 4,
-            getDrawingHorizontalLine: (value) => FlLine(
-              color: AppColors.border.withOpacity(0.12),
-              strokeWidth: 1,
-              dashArray: [5, 5],
-            ),
-          ),
-          borderData: FlBorderData(show: false),
-          barGroups: barGroups,
         ),
+        primaryYAxis: NumericAxis(
+          axisLine: const AxisLine(width: 0),
+          majorGridLines: MajorGridLines(
+            width: 1,
+            color: AppColors.border.withOpacity(0.12),
+            dashArray: const <double>[5, 5],
+          ),
+          labelStyle: const TextStyle(
+            color: AppColors.textSecondary,
+            fontSize: 9,
+            fontWeight: FontWeight.bold,
+          ),
+          numberFormat: NumberFormat.compactSimpleCurrency(),
+          maximum: maxY,
+          interval: maxY / 4,
+        ),
+        tooltipBehavior: TooltipBehavior(
+          enable: true,
+          header: '',
+          canShowMarker: false,
+          format: 'point.y',
+          textStyle: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 12,
+          ),
+          color: AppColors.surface,
+          borderColor: AppColors.border,
+          borderWidth: 1,
+        ),
+        series: <CartesianSeries<_BarData, String>>[
+          ColumnSeries<_BarData, String>(
+            dataSource: barData,
+            xValueMapper: (_BarData data, _) => data.month,
+            yValueMapper: (_BarData data, _) => data.amount,
+            borderRadius: BorderRadius.circular(4),
+            width: 0.45,
+            gradient: const LinearGradient(
+              colors: [AppColors.accentTeal, AppColors.accentPurple],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+          )
+        ],
       ),
     );
   }
+}
+
+class _PieData {
+  final String categoryName;
+  final double amount;
+  final Color color;
+
+  _PieData(this.categoryName, this.amount, this.color);
+}
+
+class _BarData {
+  final String month;
+  final double amount;
+
+  _BarData(this.month, this.amount);
 }

@@ -33,18 +33,14 @@ class _SplashScreenState extends State<SplashScreen> {
     try {
       _statusText.value = "Loading Environment Configuration...";
       _errorText.value = null;
-      // Load environment variables
       await dotenv.load(fileName: ".env");
 
       _statusText.value = "Initializing Local Database...";
-      // Init Database
       await DbService.init();
 
       _statusText.value = "Injecting App Modules...";
-      // Set up GetIt DI
       await setupLocator();
 
-      // Delay for presentation/aesthetics
       await Future.delayed(const Duration(milliseconds: 1200));
 
       if (mounted) {
@@ -70,7 +66,6 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Styled static logo with soft glow shadow
               Container(
                 padding: const EdgeInsets.all(26),
                 decoration: BoxDecoration(

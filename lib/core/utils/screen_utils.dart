@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ScreenUtils {
   // MARGIN
@@ -36,19 +35,19 @@ class ScreenUtils {
 
 class AppColors {
   static const Color background = Color(0xFF0B0E17); // Deep navy-slate dark
-  static const Color surface = Color(0xFF161B2A);    // Frosted dark navy card
-  static const Color accentTeal = Color(0xFF14B8A6);  // Mint Teal
+  static const Color surface = Color(0xFF161B2A); // Frosted dark navy card
+  static const Color accentTeal = Color(0xFF14B8A6); // Mint Teal
   static const Color accentPurple = Color(0xFF6366F1); // Indigo
   static const Color textPrimary = Color(0xFFFFFFFF);
   static const Color textSecondary = Color(0xFF94A3B8); // Slate 400
   static const Color border = Color(0xFF2E364F);
-  
+
   static const Gradient primaryGradient = LinearGradient(
     colors: [accentPurple, accentTeal],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
-  
+
   static const Gradient buttonGradient = LinearGradient(
     colors: [Color(0xFF6366F1), Color(0xFF14B8A6)],
     begin: Alignment.centerLeft,
@@ -121,93 +120,3 @@ class AppStyles {
     fontSize: ScreenUtils.fontMinimum,
   );
 }
-
-// Thin (100)
-final TextStyle textThinInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w100,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
-
-// Extra Light (200)
-final TextStyle textExtraLightInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w200,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
-
-// Light (300)
-final TextStyle textLightInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w300,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
-
-// Regular (400)
-final TextStyle textRegularInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w400,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
-
-// Medium (500)
-final TextStyle textMediumInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w500,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
-
-// Semi Bold (600)
-final TextStyle textSemiBoldInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w600,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
-
-// Bold (700)
-final TextStyle textBoldInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w700,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
-
-// Extra Bold (800)
-final TextStyle textExtraBoldInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w800,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
-
-// Black (900)
-final TextStyle textBlackInter = TextStyle(
-  decoration: TextDecoration.none,
-  fontWeight: FontWeight.w900,
-  fontSize: 16.spMin,
-  overflow: TextOverflow.ellipsis,
-  color: AppColor.textPrimary,
-  fontFamily: 'SF-Compact-Text',
-);
