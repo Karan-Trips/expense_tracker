@@ -144,6 +144,67 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
               children: [
+                const SizedBox(height: 24),
+                const Center(
+                  child: Text(
+                    "ENTER AMOUNT",
+                    style: TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    const Text(
+                      "₹",
+                      style: TextStyle(
+                        color: AppColors.accentTeal,
+                        fontSize: 34,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    IntrinsicWidth(
+                      child: TextFormField(
+                        controller: _amountController,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        textAlign: TextAlign.center,
+                        decoration: const InputDecoration(
+                          hintText: "0.00",
+                          hintStyle: TextStyle(color: AppColors.border),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.zero,
+                          filled: false,
+                        ),
+                        validator: (value) {
+                          if (value == null || value.trim().isEmpty) {
+                            return "Please enter an amount";
+                          }
+                          final parsed = double.tryParse(value.trim());
+                          if (parsed == null || parsed <= 0) {
+                            return "Please enter a valid amount";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
                 FrostedCard(
                   opacity: 0.1,
                   borderRadius: ScreenUtils.kBorderRadius,
@@ -155,35 +216,13 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                         controller: _titleController,
                         style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.storefront, color: AppColors.accentTeal, size: 20),
                           labelText: "Merchant / Title",
                           hintText: "Where did you spend?",
                         ),
                         validator: (value) {
                           if (value == null || value.trim().isEmpty) {
                             return "Please enter a merchant name";
-                          }
-                          return null;
-                        },
-                      ),
-                      SizedBox(height: ScreenUtils.spacingStander),
-                      // Amount input
-                      TextFormField(
-                        controller: _amountController,
-                        style: const TextStyle(color: Colors.white),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                        decoration: const InputDecoration(
-                          labelText: "Amount",
-                          hintText: "0.00",
-                          prefixText: "\$ ",
-                          prefixStyle: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                        ),
-                        validator: (value) {
-                          if (value == null || value.trim().isEmpty) {
-                            return "Please enter an amount";
-                          }
-                          final parsed = double.tryParse(value.trim());
-                          if (parsed == null || parsed <= 0) {
-                            return "Please enter a valid amount greater than 0";
                           }
                           return null;
                         },
@@ -203,9 +242,15 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                "Date",
-                                style: TextStyle(color: AppColors.textSecondary, fontSize: ScreenUtils.fontTextSmall),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_today, size: 18, color: AppColors.accentTeal),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    "Date",
+                                    style: TextStyle(color: AppColors.textSecondary, fontSize: ScreenUtils.fontTextSmall),
+                                  ),
+                                ],
                               ),
                               Row(
                                 children: [
@@ -222,8 +267,6 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                                       );
                                     },
                                   ),
-                                  SizedBox(width: ScreenUtils.fieldSpace),
-                                  const Icon(Icons.calendar_today, size: 16, color: AppColors.accentTeal),
                                 ],
                               ),
                             ],
@@ -237,6 +280,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                         style: const TextStyle(color: Colors.white),
                         maxLines: 2,
                         decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.description_outlined, color: AppColors.accentTeal, size: 20),
                           labelText: "Note (Optional)",
                           hintText: "Add items or comments...",
                         ),

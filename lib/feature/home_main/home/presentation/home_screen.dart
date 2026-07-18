@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:expense_tracker/core/constant/app_colors.dart';
 import 'package:expense_tracker/widgets/frosted_card.dart';
 import 'package:expense_tracker/widgets/expense_card.dart';
@@ -22,6 +23,7 @@ class HomeScreen extends ConsumerWidget {
       (sum, item) => sum + item.amount,
     );
     final String formattedTotal = NumberFormat.simpleCurrency(
+      locale: 'en_IN',
       decimalDigits: 2,
     ).format(totalSpent);
 
@@ -183,7 +185,7 @@ class HomeScreen extends ConsumerWidget {
                                 ),
                               ),
                               Text(
-                                "\$${totalSpent.toStringAsFixed(0)} / \$${budget.toStringAsFixed(0)}",
+                                "₹${totalSpent.toStringAsFixed(0)} / ₹${budget.toStringAsFixed(0)}",
                                 style: TextStyle(
                                   color: isOverBudget
                                       ? Colors.redAccent
@@ -227,8 +229,9 @@ class HomeScreen extends ConsumerWidget {
                             icon: Icons.trending_up,
                             label: "Avg. Spent",
                             value: expenses.isEmpty
-                                ? "\$0.00"
+                                ? "₹0.00"
                                 : NumberFormat.simpleCurrency(
+                                    locale: 'en_IN',
                                     decimalDigits: 0,
                                   ).format(totalSpent / expenses.length),
                           ),
@@ -289,9 +292,9 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                if (recentExpenses.isEmpty)
+                 if (recentExpenses.isEmpty)
                   Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                     decoration: BoxDecoration(
                       color: AppColors.surface.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(
@@ -299,11 +302,28 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       border: Border.all(color: AppColors.border),
                     ),
-                    child: const Center(
-                      child: Text(
-                        "No transactions yet. Add some or scan a receipt!",
-                        style: TextStyle(color: AppColors.textSecondary),
-                      ),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 100,
+                          child: Lottie.network(
+                            'https://lottie.host/c5c84d72-9b24-4f24-9b5f-5573426e95bf/PzY4Dk9v5I.json',
+                            errorBuilder: (context, error, stackTrace) {
+                              return const Icon(
+                                Icons.receipt_long_outlined,
+                                size: 48,
+                                color: AppColors.textSecondary,
+                              );
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        const Text(
+                          "No transactions yet. Add some or scan a receipt!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                        ),
+                      ],
                     ),
                   )
                 else

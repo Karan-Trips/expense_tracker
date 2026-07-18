@@ -15,7 +15,7 @@ class ExpenseCard extends StatelessWidget {
     final categoryColor = AppConstants.getCategoryColor(expense.category);
     final categoryIcon = AppConstants.getCategoryIcon(expense.category);
     final formattedDate = DateFormat('MMM dd, yyyy').format(expense.date);
-    final currencyFormat = NumberFormat.simpleCurrency(decimalDigits: 2);
+    final currencyFormat = NumberFormat.simpleCurrency(locale: 'en_IN', decimalDigits: 2);
 
     return Card(
       margin: EdgeInsets.only(bottom: ScreenUtils.spacingControl),

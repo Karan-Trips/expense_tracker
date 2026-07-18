@@ -62,6 +62,7 @@ class CategoryPieChart extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       NumberFormat.simpleCurrency(
+                        locale: 'en_IN',
                         decimalDigits: 0,
                       ).format(grandTotal),
                       style: TextStyle(
@@ -216,7 +217,7 @@ class MonthlyBarChart extends StatelessWidget {
             fontSize: ScreenUtils.fontTextTiny,
             fontWeight: FontWeight.bold,
           ),
-          numberFormat: NumberFormat.compactSimpleCurrency(),
+          numberFormat: NumberFormat.compactSimpleCurrency(locale: 'en_IN'),
           maximum: maxY,
           interval: maxY / 4,
         ),

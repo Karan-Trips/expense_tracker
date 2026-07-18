@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_constants.dart';
 import '../../../widgets/category_chip.dart';
@@ -194,14 +195,22 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                       return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Icon(
-                              Icons.search_off,
-                              size: 48,
-                              color: AppColors.textSecondary,
+                          children: [
+                            SizedBox(
+                              height: 120,
+                              child: Lottie.network(
+                                'https://lottie.host/c5c84d72-9b24-4f24-9b5f-5573426e95bf/PzY4Dk9v5I.json',
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(
+                                    Icons.receipt_long_outlined,
+                                    size: 48,
+                                    color: AppColors.textSecondary,
+                                  );
+                                },
+                              ),
                             ),
-                            SizedBox(height: 12),
-                            Text(
+                            const SizedBox(height: 12),
+                            const Text(
                               "No matching transactions found",
                               style: TextStyle(color: AppColors.textSecondary),
                             ),

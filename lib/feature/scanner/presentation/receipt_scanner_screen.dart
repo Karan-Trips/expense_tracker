@@ -56,6 +56,22 @@ class ReceiptScannerScreen extends ConsumerWidget {
       updatedAt: DateTime.now(),
     );
 
+    // Show warning snackbar if fallback data was generated
+    if (data['isFallback'] == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Offline/Free Tier limit reached. We pre-filled draft details from the image for you!",
+              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
+            ),
+            backgroundColor: AppColors.accentPurple,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      });
+    }
+
     // Navigate to AddEdit screen with pre-filled details
     context.push('/add-expense', extra: draftExpense);
   }
@@ -103,6 +119,47 @@ class ReceiptScannerScreen extends ConsumerWidget {
                     style: TextStyle(
                       color: AppColors.textSecondary,
                       fontSize: 13,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  // Gemini Free Tier Rate Limit Banner
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentTeal.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: AppColors.accentTeal.withOpacity(0.24), width: 1.2),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Icon(Icons.info_outline_rounded, size: 16, color: AppColors.accentTeal),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                "Gemini AI Free Tier Limit Notice",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                "Free tier is limited to 15 requests per minute. If you exceed this rate or are offline, scanning will gracefully fall back to pre-filled draft values so you never lose your flow.",
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 10.5,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 24),

@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import '../core/constant/app_colors.dart';
 import 'frosted_card.dart';
 
@@ -30,12 +31,18 @@ class LoadingOverlay extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                SizedBox(
+                  width: 80,
+                  height: 80,
+                  child: Lottie.network(
+                    'https://lottie.host/df25bf5a-4e89-42b7-9fa5-e11db83501a3/s409s8B2xI.json',
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const CircularProgressIndicator(
+                        strokeWidth: 3,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 20),

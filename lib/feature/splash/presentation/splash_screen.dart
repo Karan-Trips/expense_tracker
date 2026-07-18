@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import '../../../core/services/db_service.dart';
 import '../../../core/locator/locator.dart';
 import '../../../core/constant/app_colors.dart';
@@ -67,7 +68,7 @@ class _SplashScreenState extends State<SplashScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: const EdgeInsets.all(26),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   boxShadow: [
@@ -85,10 +86,18 @@ class _SplashScreenState extends State<SplashScreen> {
                     radius: 0.8,
                   ),
                 ),
-                child: const Icon(
-                  Icons.auto_awesome,
-                  size: 76,
-                  color: AppColors.accentTeal,
+                child: Lottie.network(
+                  'https://lottie.host/9c3c121e-fa2a-43c3-8a3a-1d54e4df9c2c/TqFk1Wb8p0.json',
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(
+                      Icons.auto_awesome,
+                      size: 68,
+                      color: AppColors.accentTeal,
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 40),
