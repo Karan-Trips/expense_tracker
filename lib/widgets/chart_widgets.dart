@@ -54,7 +54,7 @@ class CategoryPieChart extends StatelessWidget {
                       "TOTAL",
                       style: TextStyle(
                         color: AppColors.textSecondary,
-                        fontSize: 10,
+                        fontSize: ScreenUtils.fontTextTiny,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.5,
                       ),
@@ -66,7 +66,7 @@ class CategoryPieChart extends StatelessWidget {
                       ).format(grandTotal),
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 20,
+                        fontSize: ScreenUtils.fontTextMBig,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
@@ -89,11 +89,11 @@ class CategoryPieChart extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: ScreenUtils.spacingControl),
         // Legend
         Wrap(
-          spacing: 12,
-          runSpacing: 6,
+          spacing: ScreenUtils.spacingControl,
+          runSpacing: ScreenUtils.spacingStandardControl,
           alignment: WrapAlignment.center,
           children: totals.keys.map((category) {
             final color = AppConstants.getCategoryColor(category);
@@ -114,7 +114,7 @@ class CategoryPieChart extends StatelessWidget {
                   name,
                   style: const TextStyle(
                     color: AppColors.textSecondary,
-                    fontSize: 12,
+                    fontSize: ScreenUtils.fontTextSmaller,
                   ),
                 ),
               ],
@@ -190,9 +190,9 @@ class MonthlyBarChart extends StatelessWidget {
         primaryXAxis: const CategoryAxis(
           majorGridLines: MajorGridLines(width: 0),
           axisLine: AxisLine(width: 0),
-          labelStyle: TextStyle(
+          labelStyle: const TextStyle(
             color: AppColors.textSecondary,
-            fontSize: 10,
+            fontSize: ScreenUtils.fontTextSmaller,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -205,7 +205,7 @@ class MonthlyBarChart extends StatelessWidget {
           ),
           labelStyle: const TextStyle(
             color: AppColors.textSecondary,
-            fontSize: 9,
+            fontSize: ScreenUtils.fontTextTiny,
             fontWeight: FontWeight.bold,
           ),
           numberFormat: NumberFormat.compactSimpleCurrency(),
@@ -220,7 +220,7 @@ class MonthlyBarChart extends StatelessWidget {
           textStyle: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
-            fontSize: 12,
+            fontSize: ScreenUtils.fontTextSmaller,
           ),
           color: AppColors.surface,
           borderColor: AppColors.border,

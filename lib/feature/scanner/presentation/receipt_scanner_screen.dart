@@ -141,82 +141,82 @@ class ReceiptScannerScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () => notifier.scanReceipt(),
-                                icon: const Icon(Icons.auto_awesome),
-                                label: const Text("Scan Receipt"),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    )
-                  else
-                    // Selection Options (Solid Border Upload Area)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 40,
-                        horizontal: 20,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppColors.border, width: 1.5),
-                      ),
-                      child: Column(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: AppColors.accentTeal.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(
-                              Icons.cloud_upload_outlined,
-                              size: 48,
-                              color: AppColors.accentTeal,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          const Text(
-                            "Upload Receipt Image",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            "Select receipt source to begin the AI scan",
-                            style: TextStyle(
-                              color: AppColors.textSecondary,
-                              fontSize: 12,
-                            ),
-                          ),
-                          const SizedBox(height: 28),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              _buildSourceButton(
-                                icon: Icons.camera_alt,
-                                label: "Camera",
-                                onTap: () =>
-                                    notifier.pickImage(ImageSource.camera),
-                              ),
-                              _buildSourceButton(
-                                icon: Icons.photo_library,
-                                label: "Gallery",
-                                onTap: () =>
-                                    notifier.pickImage(ImageSource.gallery),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                             const SizedBox(width: ScreenUtils.margin),
+                             Expanded(
+                               child: ElevatedButton.icon(
+                                 onPressed: () => notifier.scanReceipt(),
+                                 icon: const Icon(Icons.auto_awesome),
+                                 label: const Text("Scan Receipt"),
+                               ),
+                             ),
+                           ],
+                         ),
+                       ],
+                     )
+                   else
+                     // Selection Options (Solid Border Upload Area)
+                     Container(
+                       padding: const EdgeInsets.symmetric(
+                         vertical: ScreenUtils.keyboardRadius,
+                         horizontal: ScreenUtils.fontTextMBig,
+                       ),
+                       decoration: BoxDecoration(
+                         color: AppColors.surface.withOpacity(0.4),
+                         borderRadius: BorderRadius.circular(ScreenUtils.margin),
+                         border: Border.all(color: AppColors.border, width: 1.5),
+                       ),
+                       child: Column(
+                         children: [
+                           Container(
+                             padding: const EdgeInsets.all(ScreenUtils.margin),
+                             decoration: BoxDecoration(
+                               color: AppColors.accentTeal.withOpacity(0.1),
+                               shape: BoxShape.circle,
+                             ),
+                             child: const Icon(
+                               Icons.cloud_upload_outlined,
+                               size: 48,
+                               color: AppColors.accentTeal,
+                             ),
+                           ),
+                           const SizedBox(height: ScreenUtils.fontTextMBig),
+                           const Text(
+                             "Upload Receipt Image",
+                             style: TextStyle(
+                               color: Colors.white,
+                               fontSize: ScreenUtils.fontText,
+                               fontWeight: FontWeight.bold,
+                             ),
+                           ),
+                           const SizedBox(height: 6),
+                           const Text(
+                             "Select receipt source to begin the AI scan",
+                             style: TextStyle(
+                               color: AppColors.textSecondary,
+                               fontSize: ScreenUtils.fontTextSmaller,
+                             ),
+                           ),
+                           const SizedBox(height: 28),
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                             children: [
+                               _buildSourceButton(
+                                 icon: Icons.camera_alt,
+                                 label: "Camera",
+                                 onTap: () =>
+                                     notifier.pickImage(ImageSource.camera),
+                               ),
+                               _buildSourceButton(
+                                 icon: Icons.photo_library,
+                                 label: "Gallery",
+                                 onTap: () =>
+                                     notifier.pickImage(ImageSource.gallery),
+                               ),
+                             ],
+                           ),
+                         ],
+                       ),
+                     ),
 
                   if (scanState.status == ScanStatus.error &&
                       scanState.errorMessage != null) ...[

@@ -18,12 +18,12 @@ class ExpenseCard extends StatelessWidget {
     final currencyFormat = NumberFormat.simpleCurrency(decimalDigits: 2);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: 12),
+      margin: const EdgeInsets.only(bottom: ScreenUtils.spacingControl),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(ScreenUtils.margin),
           child: Row(
             children: [
               // Icon container with soft accent background
@@ -32,7 +32,7 @@ class ExpenseCard extends StatelessWidget {
                 height: 44,
                 decoration: BoxDecoration(
                   color: categoryColor.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
                   border: Border.all(
                     color: categoryColor.withOpacity(0.3),
                     width: 1.5,
@@ -44,7 +44,7 @@ class ExpenseCard extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: ScreenUtils.margin),
               // Merchant / Title and Date details
               Expanded(
                 child: Column(
@@ -55,7 +55,7 @@ class ExpenseCard extends StatelessWidget {
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: ScreenUtils.fontTextSmall,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -65,7 +65,7 @@ class ExpenseCard extends StatelessWidget {
                       formattedDate,
                       style: const TextStyle(
                         color: AppColors.textSecondary,
-                        fontSize: 12,
+                        fontSize: ScreenUtils.fontTextSmaller,
                       ),
                     ),
                   ],
@@ -92,7 +92,7 @@ class ExpenseCard extends StatelessWidget {
                       child: Text(
                         expense.description!,
                         style: const TextStyle(
-                          fontSize: 10,
+                          fontSize: ScreenUtils.fontTextTiny,
                           color: AppColors.textSecondary,
                           fontStyle: FontStyle.italic,
                         ),
