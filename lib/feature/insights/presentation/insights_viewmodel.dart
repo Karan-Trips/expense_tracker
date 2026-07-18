@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/locator/locator.dart';
+import '../../../core/services/gemini_limit_provider.dart';
+import '../../../core/services/notification_service.dart';
 import '../../expense/domain/expense.dart';
-
 import '../../../core/constant/app_constants.dart';
 
 enum InsightsStatus { idle, generating, success, error }
@@ -61,8 +64,12 @@ class InsightsViewModel extends AutoDisposeNotifier<InsightsState> {
       }).toList();
 
       final jsonStr = jsonEncode(mappedList);
+      ref.read(geminiLimitProvider.notifier).registerRequest();
       final report = await _geminiService.generateSpendingInsights(jsonStr);
       state = state.copyWith(status: InsightsStatus.success, reportMarkdown: report);
+      
+      // Auto save and notify user
+      await saveReportToFile(report);
     } catch (e) {
       final errStr = e.toString();
       String userFriendlyError = errStr;
@@ -74,6 +81,25 @@ class InsightsViewModel extends AutoDisposeNotifier<InsightsState> {
       }
       
       state = state.copyWith(status: InsightsStatus.error, errorMessage: userFriendlyError);
+    }
+  }
+
+  Future<String> saveReportToFile(String reportText) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      final dateStr = DateTime.now().millisecondsSinceEpoch;
+      final file = File('${directory.path}/Aura_Spending_Insights_$dateStr.md');
+      await file.writeAsString(reportText);
+
+      // Trigger local notification
+      await NotificationService.showNotification(
+        id: 100,
+        title: "Insights Report Saved!",
+        body: "File saved: ${file.path.split('/').last}",
+      );
+      return file.path;
+    } catch (e) {
+      return '';
     }
   }
 }

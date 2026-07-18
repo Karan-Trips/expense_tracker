@@ -18,6 +18,7 @@ final goRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/splash',
+      name: 'splash',
       builder: (context, state) => const SplashScreen(),
     ),
     ShellRoute(
@@ -28,24 +29,28 @@ final goRouter = GoRouter(
       routes: [
         GoRoute(
           path: '/home',
+          name: 'home',
           pageBuilder: (context, state) => const NoTransitionPage(
             child: HomeScreen(),
           ),
         ),
         GoRoute(
           path: '/expenses',
+          name: 'expenses',
           pageBuilder: (context, state) => const NoTransitionPage(
             child: ExpenseListScreen(),
           ),
         ),
         GoRoute(
           path: '/scanner',
+          name: 'scanner',
           pageBuilder: (context, state) => const NoTransitionPage(
             child: ReceiptScannerScreen(),
           ),
         ),
         GoRoute(
           path: '/insights',
+          name: 'insights',
           pageBuilder: (context, state) => const NoTransitionPage(
             child: SpendingInsightsScreen(),
           ),
@@ -54,6 +59,7 @@ final goRouter = GoRouter(
     ),
     GoRoute(
       path: '/add-expense',
+      name: 'add-expense',
       parentNavigatorKey: _rootNavigatorKey,
       builder: (context, state) {
         final expense = state.extra as Expense?;

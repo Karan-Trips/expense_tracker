@@ -9,9 +9,12 @@ class MarkdownReportViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final baseStyleSheet = MarkdownStyleSheet.fromTheme(theme);
+
     return MarkdownBody(
       data: markdown,
-      styleSheet: MarkdownStyleSheet(
+      styleSheet: baseStyleSheet.copyWith(
         h1: TextStyle(
           color: Colors.white,
           fontSize: ScreenUtils.fontTextMBig,

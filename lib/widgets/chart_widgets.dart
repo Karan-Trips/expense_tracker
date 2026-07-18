@@ -45,6 +45,17 @@ class CategoryPieChart extends StatelessWidget {
           height: 180,
           child: SfCircularChart(
             margin: EdgeInsets.zero,
+            tooltipBehavior: TooltipBehavior(
+              enable: true,
+              format: 'point.x: ₹point.y',
+              textStyle: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+              color: AppColors.surface,
+              borderColor: AppColors.border,
+              borderWidth: 1,
+            ),
             annotations: <CircularChartAnnotation>[
               CircularChartAnnotation(
                 widget: Column(
@@ -83,6 +94,8 @@ class CategoryPieChart extends StatelessWidget {
                 pointColorMapper: (_PieData data, _) => data.color,
                 innerRadius: '72%',
                 radius: '90%',
+                enableTooltip: true,
+                animationDuration: 1200,
                 dataLabelSettings: const DataLabelSettings(isVisible: false),
               ),
             ],
@@ -94,9 +107,12 @@ class CategoryPieChart extends StatelessWidget {
           spacing: ScreenUtils.spacingControl,
           runSpacing: ScreenUtils.spacingStandardControl,
           alignment: WrapAlignment.center,
-          children: totals.keys.map((category) {
+          children: totals.entries.map((entry) {
+            final category = entry.key;
+            final amount = entry.value;
             final color = AppConstants.getCategoryColor(category);
             final name = AppConstants.getCategoryName(category);
+            final pct = grandTotal > 0 ? (amount / grandTotal * 100).toStringAsFixed(1) : "0.0";
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -110,7 +126,7 @@ class CategoryPieChart extends StatelessWidget {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  name,
+                  "$name ($pct%)",
                   style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: ScreenUtils.fontTextSmaller,
@@ -225,7 +241,7 @@ class MonthlyBarChart extends StatelessWidget {
           enable: true,
           header: '',
           canShowMarker: false,
-          format: 'point.y',
+          format: 'point.x: ₹point.y',
           textStyle: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -240,8 +256,12 @@ class MonthlyBarChart extends StatelessWidget {
             dataSource: barData,
             xValueMapper: (_BarData data, _) => data.month,
             yValueMapper: (_BarData data, _) => data.amount,
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(6),
+              topRight: Radius.circular(6),
+            ),
             width: 0.45,
+            animationDuration: 1000,
             gradient: const LinearGradient(
               colors: [AppColors.accentTeal, AppColors.accentPurple],
               begin: Alignment.bottomCenter,

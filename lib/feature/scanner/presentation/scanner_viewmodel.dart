@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/services/gemini_service.dart';
 import '../../../core/locator/locator.dart';
+import '../../../core/services/gemini_limit_provider.dart';
 
 enum ScanStatus { idle, picking, scanning, success, error }
 
@@ -86,6 +87,7 @@ class ScannerViewModel extends AutoDisposeNotifier<ScannerState> {
       final mimeType = state.imagePath?.endsWith('.png') == true
           ? 'image/png'
           : 'image/jpeg';
+      ref.read(geminiLimitProvider.notifier).registerRequest();
       final result = await _geminiService.scanReceipt(bytes, mimeType);
       state = state.copyWith(status: ScanStatus.success, extractedData: result);
     } catch (e) {

@@ -62,7 +62,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
           child: Column(
             children: [
               // Search Input
-               Padding(
+              Padding(
                 padding: EdgeInsets.symmetric(
                   horizontal: ScreenUtils.margin,
                   vertical: ScreenUtils.spacingStandardControl,
@@ -112,27 +112,70 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                           // "All" option
                           final isSelected = selectedCategory == null;
                           return Padding(
+                            key: const ValueKey('category_chip_all'),
                             padding: EdgeInsets.only(
                               right: ScreenUtils.spacingStandardControl,
                             ),
-                            child: ChoiceChip(
-                              label: const Text("All"),
-                              selected: isSelected,
-                              selectedColor: AppColors.accentTeal.withOpacity(
-                                0.2,
-                              ),
-                              backgroundColor: AppColors.surface,
-                              labelStyle: TextStyle(
-                                color: isSelected
-                                    ? AppColors.accentTeal
-                                    : AppColors.textSecondary,
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
-                              ),
-                              onSelected: (_) {
+                            child: GestureDetector(
+                              onTap: () {
                                 _selectedCategory.value = null;
                               },
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: ScreenUtils.fontTextSmall,
+                                  vertical: ScreenUtils.spacingStandardControl,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColors.accentTeal.withOpacity(0.15)
+                                      : AppColors.surface,
+                                  borderRadius: BorderRadius.circular(
+                                    ScreenUtils.textRadius,
+                                  ),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColors.accentTeal
+                                        : AppColors.border,
+                                    width: 1.5,
+                                  ),
+                                  boxShadow: isSelected
+                                      ? [
+                                          BoxShadow(
+                                            color: AppColors.accentTeal
+                                                .withOpacity(0.35),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ]
+                                      : null,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.grid_view_rounded,
+                                      size: 15,
+                                      color: isSelected
+                                          ? AppColors.accentTeal
+                                          : AppColors.textSecondary,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      "All",
+                                      style: TextStyle(
+                                        color: isSelected
+                                            ? AppColors.textPrimary
+                                            : AppColors.textSecondary,
+                                        fontWeight: isSelected
+                                            ? FontWeight.bold
+                                            : FontWeight.normal,
+                                        fontSize: ScreenUtils.fontTextSmall,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           );
                         }
@@ -141,6 +184,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                         final isSelected = selectedCategory == cat;
 
                         return Padding(
+                          key: ValueKey('category_chip_${cat.name}'),
                           padding: EdgeInsets.only(
                             right: ScreenUtils.spacingStandardControl,
                           ),
@@ -191,31 +235,81 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                           .toList();
                     }
 
+                    final filteredCount = filteredExpenses.length;
+                    final double filteredTotal = filteredExpenses.fold(
+                      0.0,
+                      (sum, item) => sum + item.amount,
+                    );
+                    final String formattedFilteredTotal =
+                        NumberFormat.simpleCurrency(
+                          locale: 'en_IN',
+                          decimalDigits: 2,
+                        ).format(filteredTotal);
+
+                    final summaryBar = Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: ScreenUtils.margin,
+                        vertical: ScreenUtils.spacingStandardControl,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Found $filteredCount transaction${filteredCount == 1 ? '' : 's'}",
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            "Total: $formattedFilteredTotal",
+                            style: const TextStyle(
+                              color: AppColors.accentTeal,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+
                     if (filteredExpenses.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 120,
-                              child: Lottie.network(
-                                'https://lottie.host/c5c84d72-9b24-4f24-9b5f-5573426e95bf/PzY4Dk9v5I.json',
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(
-                                    Icons.receipt_long_outlined,
-                                    size: 48,
-                                    color: AppColors.textSecondary,
-                                  );
-                                },
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          summaryBar,
+                          Expanded(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    height: 120,
+                                    child: Lottie.network(
+                                      'https://lottie.host/c5c84d72-9b24-4f24-9b5f-5573426e95bf/PzY4Dk9v5I.json',
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return const Icon(
+                                              Icons.receipt_long_outlined,
+                                              size: 48,
+                                              color: AppColors.textSecondary,
+                                            );
+                                          },
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  const Text(
+                                    "No matching transactions found",
+                                    style: TextStyle(
+                                      color: AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            const Text(
-                              "No matching transactions found",
-                              style: TextStyle(color: AppColors.textSecondary),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       );
                     }
 
@@ -241,103 +335,143 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                       listItems.add(exp);
                     }
 
-                    return RefreshIndicator(
-                      color: AppColors.accentTeal,
-                      onRefresh: () =>
-                          ref.read(expenseProvider.notifier).loadExpenses(),
-                      child: ListView.builder(
-                        padding: EdgeInsets.fromLTRB(
-                          ScreenUtils.margin,
-                          0,
-                          ScreenUtils.margin,
-                          100,
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        summaryBar,
+                        Expanded(
+                          child: RefreshIndicator(
+                            color: AppColors.accentTeal,
+                            onRefresh: () => ref
+                                .read(expenseProvider.notifier)
+                                .loadExpenses(),
+                            child: ListView.builder(
+                              padding: EdgeInsets.fromLTRB(
+                                ScreenUtils.margin,
+                                0,
+                                ScreenUtils.margin,
+                                100,
+                              ),
+                              itemCount: listItems.length,
+                              itemBuilder: (context, index) {
+                                final item = listItems[index];
+
+                                if (item is DateTime) {
+                                  return Padding(
+                                    key: ValueKey(
+                                      'header_${item.millisecondsSinceEpoch}',
+                                    ),
+                                    padding: const EdgeInsets.only(
+                                      top: 26.0,
+                                      bottom: 14.0,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 5,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.surface
+                                                .withOpacity(0.85),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            border: Border.all(
+                                              color: AppColors.border
+                                                  .withOpacity(0.85),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            _getDateHeader(item).toUpperCase(),
+                                            style: const TextStyle(
+                                              color: AppColors.accentTeal,
+                                              fontSize: 9,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: 1.0,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Expanded(
+                                          child: Divider(
+                                            color: AppColors.border.withOpacity(
+                                              0.3,
+                                            ),
+                                            thickness: 1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+
+                                final expense = item as Expense;
+
+                                return Dismissible(
+                                  key: ValueKey('dismissible_${expense.id}'),
+                                  direction: DismissDirection.endToStart,
+                                  background: Container(
+                                    alignment: Alignment.centerRight,
+                                    padding: const EdgeInsets.only(right: 20.0),
+                                    margin: EdgeInsets.only(
+                                      bottom: ScreenUtils.spacingControl,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: Colors.redAccent.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(
+                                        ScreenUtils.cardCircularRadius,
+                                      ),
+                                      border: Border.all(
+                                        color: Colors.redAccent.withOpacity(
+                                          0.4,
+                                        ),
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.delete,
+                                      color: Colors.redAccent,
+                                    ),
+                                  ),
+                                  onDismissed: (direction) async {
+                                    final notifier = ref.read(
+                                      expenseProvider.notifier,
+                                    );
+                                    final messenger = ScaffoldMessenger.of(
+                                      context,
+                                    );
+                                    await notifier.deleteExpense(expense.id);
+                                    messenger.showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          "Deleted ${expense.title}",
+                                        ),
+                                        action: SnackBarAction(
+                                          label: "Undo",
+                                          textColor: AppColors.accentTeal,
+                                          onPressed: () async {
+                                            await notifier.addExpense(expense);
+                                          },
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: ExpenseCard(
+                                    key: ValueKey('card_${expense.id}'),
+                                    expense: expense,
+                                    onTap: () => context.pushNamed(
+                                      'add-expense',
+                                      extra: expense,
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                        itemCount: listItems.length,
-                        itemBuilder: (context, index) {
-                          final item = listItems[index];
-
-                          if (item is DateTime) {
-                            return Padding(
-                              padding: const EdgeInsets.only(
-                                top: 24.0,
-                                bottom: 12.0,
-                              ),
-                              child: Row(
-                                children: [
-                                  Text(
-                                    _getDateHeader(item),
-                                    style: const TextStyle(
-                                      color: AppColors.textSecondary,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: 1.2,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: Divider(
-                                      color: AppColors.border.withOpacity(0.35),
-                                      thickness: 1,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }
-
-                          final expense = item as Expense;
-
-                          return Dismissible(
-                            key: Key(expense.id),
-                            direction: DismissDirection.endToStart,
-                            background: Container(
-                              alignment: Alignment.centerRight,
-                              padding: const EdgeInsets.only(right: 20.0),
-                              margin: EdgeInsets.only(
-                                bottom: ScreenUtils.spacingControl,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.redAccent.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(
-                                  ScreenUtils.cardCircularRadius,
-                                ),
-                                border: Border.all(
-                                  color: Colors.redAccent.withOpacity(0.4),
-                                ),
-                              ),
-                              child: const Icon(
-                                Icons.delete,
-                                color: Colors.redAccent,
-                              ),
-                            ),
-                            onDismissed: (direction) async {
-                              final notifier = ref.read(
-                                expenseProvider.notifier,
-                              );
-                              final messenger = ScaffoldMessenger.of(context);
-                              await notifier.deleteExpense(expense.id);
-
-                              messenger.showSnackBar(
-                                SnackBar(
-                                  content: Text("Deleted ${expense.title}"),
-                                  action: SnackBarAction(
-                                    label: "Undo",
-                                    textColor: AppColors.accentTeal,
-                                    onPressed: () async {
-                                      await notifier.addExpense(expense);
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                            child: ExpenseCard(
-                              expense: expense,
-                              onTap: () =>
-                                  context.push('/add-expense', extra: expense),
-                            ),
-                          );
-                        },
-                      ),
+                      ],
                     );
                   },
                 ),

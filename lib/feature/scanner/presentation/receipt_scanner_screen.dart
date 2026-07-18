@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_constants.dart';
+import '../../../core/services/gemini_limit_provider.dart';
 import '../../../widgets/frosted_card.dart';
 import '../../../widgets/loading_overlay.dart';
 import '../../expense/domain/expense.dart';
@@ -90,13 +91,14 @@ class ReceiptScannerScreen extends ConsumerWidget {
     }
 
     // Navigate to AddEdit screen with pre-filled details
-    context.push('/add-expense', extra: draftExpense);
+    context.pushNamed('add-expense', extra: draftExpense);
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final scanState = ref.watch(scannerProvider);
     final notifier = ref.read(scannerProvider.notifier);
+    final limitState = ref.watch(geminiLimitProvider);
 
     // Listen for success status to navigate
     ref.listen<ScannerState>(scannerProvider, (previous, next) {
@@ -155,21 +157,52 @@ class ReceiptScannerScreen extends ConsumerWidget {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                "Gemini AI Free Tier Limit Notice",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Gemini AI Free Tier Limit",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Out of 15 requests: ${limitState.remainingRequests} left",
+                                    style: TextStyle(
+                                      color: limitState.remainingRequests < 5
+                                          ? Colors.orangeAccent
+                                          : AppColors.accentTeal,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(2),
+                                child: LinearProgressIndicator(
+                                  value: limitState.remainingRequests / 15.0,
+                                  backgroundColor: AppColors.border.withOpacity(0.4),
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    limitState.remainingRequests < 5
+                                        ? Colors.orangeAccent
+                                        : AppColors.accentTeal,
+                                  ),
+                                  minHeight: 4,
                                 ),
                               ),
-                              SizedBox(height: 4),
+                              const SizedBox(height: 8),
                               Text(
-                                "Free tier is limited to 15 requests per minute. If you exceed this rate or are offline, scanning will gracefully fall back to pre-filled draft values so you never lose your flow.",
-                                style: TextStyle(
+                                limitState.nextResetSeconds > 0
+                                    ? "Next request slot resets in ${limitState.nextResetSeconds}s. If you hit the limit, scanning falls back gracefully to offline mode."
+                                    : "All 15 request slots are available. Offline fallback ensures you never lose scan flow.",
+                                style: const TextStyle(
                                   color: AppColors.textSecondary,
-                                  fontSize: 10.5,
+                                  fontSize: 10,
                                   height: 1.4,
                                 ),
                               ),

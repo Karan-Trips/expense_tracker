@@ -28,12 +28,24 @@ class HomeScreen extends ConsumerWidget {
     ).format(totalSpent);
 
     // Budget Calculations
-    const double budget = 1500.0;
+    const double budget =
+        15000.0; // Increased to 15,000 for realistic monthly budget mapping
     final double percentage = (totalSpent / budget).clamp(0.0, 1.0);
     final bool isOverBudget = totalSpent > budget;
 
     // Get recent 3 expenses
     final recentExpenses = expenses.take(3).toList();
+
+    // Time-based greeting
+    final hour = DateTime.now().hour;
+    final String greeting;
+    if (hour < 12) {
+      greeting = "Good morning";
+    } else if (hour < 17) {
+      greeting = "Good afternoon";
+    } else {
+      greeting = "Good evening";
+    }
 
     return Scaffold(
       body: Container(
@@ -98,7 +110,7 @@ class HomeScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Hello, Karan",
+                            "$greeting, Karan",
                             style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: ScreenUtils.fontTextSmall,
@@ -118,36 +130,41 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    // Action Shortcut add button
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: AppColors.accentTeal.withOpacity(0.12),
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.accentTeal.withOpacity(0.35),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: IconButton(
-                        padding: EdgeInsets.zero,
-                        icon: const Icon(
-                          Icons.add,
-                          color: AppColors.accentTeal,
-                          size: 22,
-                        ),
-                        onPressed: () => context.push('/add-expense'),
-                      ),
-                    ),
                   ],
                 ),
                 SizedBox(height: ScreenUtils.margin * 1.5),
-                // Frosted summary card
-                FrostedCard(
-                  opacity: 0.12,
-                  blur: 25,
-                  borderRadius: ScreenUtils.kBorderRadius,
+                // Frosted summary card with premium cosmic linear gradient
+                Container(
+                  padding: EdgeInsets.all(ScreenUtils.margin),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.surface.withOpacity(0.75),
+                        const Color(0xFF1C223A).withOpacity(0.55),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(
+                      ScreenUtils.kBorderRadius,
+                    ),
+                    border: Border.all(
+                      color: AppColors.border.withOpacity(0.65),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.accentPurple.withOpacity(0.03),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
                   child: Column(
                     children: [
                       Text(
@@ -215,30 +232,71 @@ class HomeScreen extends ConsumerWidget {
                         ],
                       ),
                       const SizedBox(height: 20),
-                      Divider(color: AppColors.border.withOpacity(0.5)),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          _buildMiniStat(
-                            icon: Icons.receipt_long,
-                            label: "Transactions",
-                            value: "${expenses.length}",
-                          ),
-                          _buildMiniStat(
-                            icon: Icons.trending_up,
-                            label: "Avg. Spent",
-                            value: expenses.isEmpty
-                                ? "₹0.00"
-                                : NumberFormat.simpleCurrency(
-                                    locale: 'en_IN',
-                                    decimalDigits: 0,
-                                  ).format(totalSpent / expenses.length),
-                          ),
-                        ],
+                      Divider(color: AppColors.border.withOpacity(0.4)),
+                      const SizedBox(height: 12),
+                      IntrinsicHeight(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: _buildMiniStat(
+                                icon: Icons.receipt_long_rounded,
+                                label: "Transactions",
+                                value: "${expenses.length}",
+                                iconColor: AppColors.accentPurple,
+                              ),
+                            ),
+                            VerticalDivider(
+                              color: AppColors.border.withOpacity(0.4),
+                              thickness: 1.2,
+                              indent: 2,
+                              endIndent: 2,
+                            ),
+                            Expanded(
+                              child: _buildMiniStat(
+                                icon: Icons.analytics_outlined,
+                                label: "Avg. Spent",
+                                value: expenses.isEmpty
+                                    ? "₹0"
+                                    : NumberFormat.simpleCurrency(
+                                        locale: 'en_IN',
+                                        decimalDigits: 0,
+                                      ).format(totalSpent / expenses.length),
+                                iconColor: AppColors.accentTeal,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
+                ),
+                const SizedBox(height: 24),
+                // Fintech Quick Action Cards
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildActionCard(
+                        context: context,
+                        title: "Smart AI Scan",
+                        subtitle: "Scan receipts via Gemini",
+                        icon: Icons.document_scanner_outlined,
+                        iconColor: AppColors.accentPurple,
+                        onTap: () => context.goNamed('scanner'),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildActionCard(
+                        context: context,
+                        title: "Manual Entry",
+                        subtitle: "Enter details manually",
+                        icon: Icons.add_card_rounded,
+                        iconColor: AppColors.accentTeal,
+                        onTap: () => context.pushNamed('add-expense'),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 32),
                 // Category breakdown title
@@ -280,7 +338,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     TextButton(
-                      onPressed: () => context.go('/expenses'),
+                      onPressed: () => context.goNamed('expenses'),
                       child: Text(
                         "See All",
                         style: TextStyle(
@@ -292,9 +350,12 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 8),
-                 if (recentExpenses.isEmpty)
+                if (recentExpenses.isEmpty)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 20,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surface.withOpacity(0.5),
                       borderRadius: BorderRadius.circular(
@@ -321,7 +382,10 @@ class HomeScreen extends ConsumerWidget {
                         const Text(
                           "No transactions yet. Add some or scan a receipt!",
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                          style: TextStyle(
+                            color: AppColors.textSecondary,
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -329,8 +393,9 @@ class HomeScreen extends ConsumerWidget {
                 else
                   ...recentExpenses.map(
                     (exp) => ExpenseCard(
+                      key: ValueKey('recent_${exp.id}'),
                       expense: exp,
-                      onTap: () => context.push('/add-expense', extra: exp),
+                      onTap: () => context.pushNamed('add-expense', extra: exp),
                     ),
                   ),
               ],
@@ -345,32 +410,110 @@ class HomeScreen extends ConsumerWidget {
     required IconData icon,
     required String label,
     required String value,
+    required Color iconColor,
   }) {
     return Column(
       children: [
         Row(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 14, color: AppColors.accentTeal),
-            const SizedBox(width: 4),
+            Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: iconColor.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(icon, size: 12, color: iconColor),
+            ),
+            const SizedBox(width: 6),
             Text(
-              label,
-              style: const TextStyle(
-                color: AppColors.textSecondary,
-                fontSize: 11,
+              label.toUpperCase(),
+              style: TextStyle(
+                color: AppColors.textSecondary.withOpacity(0.8),
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.8,
               ),
             ),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
           value,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildActionCard({
+    required BuildContext context,
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: iconColor.withOpacity(0.2), width: 1.2),
+        boxShadow: [
+          BoxShadow(
+            color: iconColor.withOpacity(0.04),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(14.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: iconColor.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: iconColor.withOpacity(0.25),
+                    width: 1,
+                  ),
+                ),
+                child: Icon(icon, color: iconColor, size: 20),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13.5,
+                  letterSpacing: 0.2,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  color: AppColors.textSecondary.withOpacity(0.85),
+                  fontSize: 10,
+                  height: 1.3,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
