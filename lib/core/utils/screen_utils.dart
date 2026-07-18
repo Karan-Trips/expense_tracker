@@ -1,36 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ScreenUtils {
   // MARGIN
-  static const double margin = 16;
-  static const double fieldSpace = 8;
-  static const double spacingStander = 16;
-  static const double spacingControl = 12;
-  static const double spacingStandardControl = 8;
-  static const double buttonHeight = 60;
-  static const double cardCircularRadius = 12;
-  static const double panelHeightClosed = 72;
+  static double get margin => 16.w;
+  static double get fieldSpace => 8.h;
+  static double get spacingStander => 16.h;
+  static double get spacingControl => 12.h;
+  static double get spacingStandardControl => 8.w;
+  static double get buttonHeight => 60.h;
+  static double get cardCircularRadius => 12.r;
+  static double get panelHeightClosed => 72.h;
 
   // FONTS
-  static const double fontTextTitle = 30;
-  static const double fontTextBig = 24;
-  static const double fontTextMBig = 20;
-  static const double fontText = 16;
-  static const double fontEditText = fontText;
-  static const double fontButton = fontText;
-  static const double fontTextSmall = 14;
-  static const double fontTextSmaller = 12;
-  static const double fontTextTiny = 10;
-  static const double fontMinimum = 8;
+  static double get fontTextTitle => 30.sp;
+  static double get fontTextBig => 24.sp;
+  static double get fontTextMBig => 20.sp;
+  static double get fontText => 16.sp;
+  static double get fontEditText => fontText;
+  static double get fontButton => fontText;
+  static double get fontTextSmall => 14.sp;
+  static double get fontTextSmaller => 12.sp;
+  static double get fontTextTiny => 10.sp;
+  static double get fontMinimum => 8.sp;
 
-  static const double textRadius = 50;
-  static const double editTextRadius = 6;
-  static const double keyboardRadius = 40;
-  static const double keyboardIconHW = 80;
+  static double get textRadius => 50.r;
+  static double get editTextRadius => 6.r;
+  static double get keyboardRadius => 40.r;
+  static double get keyboardIconHW => 80.w;
 
   // RADIUS
-  static const double kBorderRadius = 14.0;
-  static const double kImageBorderRadius = 12.0;
+  static double get kBorderRadius => 14.0.r;
+  static double get kImageBorderRadius => 12.0.r;
 }
 
 class AppColors {
@@ -66,56 +67,56 @@ class AppColor {
 }
 
 class AppStyles {
-  static const TextStyle title = TextStyle(
+  static TextStyle title = TextStyle(
     color: AppColors.textPrimary,
     fontSize: ScreenUtils.fontTextTitle,
     fontWeight: FontWeight.bold,
   );
 
-  static const TextStyle textBig = TextStyle(
+  static TextStyle textBig = TextStyle(
     color: AppColors.textPrimary,
     fontSize: ScreenUtils.fontTextBig,
     fontWeight: FontWeight.bold,
   );
 
-  static const TextStyle textMBig = TextStyle(
+  static TextStyle textMBig = TextStyle(
     color: AppColors.textPrimary,
     fontSize: ScreenUtils.fontTextMBig,
     fontWeight: FontWeight.bold,
   );
 
-  static const TextStyle text = TextStyle(
+  static TextStyle text = TextStyle(
     color: AppColors.textPrimary,
     fontSize: ScreenUtils.fontText,
   );
 
-  static const TextStyle editText = TextStyle(
+  static TextStyle editText = TextStyle(
     color: AppColors.textPrimary,
     fontSize: ScreenUtils.fontEditText,
   );
 
-  static const TextStyle button = TextStyle(
+  static TextStyle button = TextStyle(
     color: AppColors.background,
     fontSize: ScreenUtils.fontButton,
     fontWeight: FontWeight.bold,
   );
 
-  static const TextStyle textSmall = TextStyle(
+  static TextStyle textSmall = TextStyle(
     color: AppColors.textSecondary,
     fontSize: ScreenUtils.fontTextSmall,
   );
 
-  static const TextStyle textSmaller = TextStyle(
+  static TextStyle textSmaller = TextStyle(
     color: AppColors.textSecondary,
     fontSize: ScreenUtils.fontTextSmaller,
   );
 
-  static const TextStyle textTiny = TextStyle(
+  static TextStyle textTiny = TextStyle(
     color: AppColors.textSecondary,
     fontSize: ScreenUtils.fontTextTiny,
   );
 
-  static const TextStyle minimum = TextStyle(
+  static TextStyle minimum = TextStyle(
     color: AppColors.textSecondary,
     fontSize: ScreenUtils.fontMinimum,
   );

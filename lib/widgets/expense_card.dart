@@ -18,12 +18,12 @@ class ExpenseCard extends StatelessWidget {
     final currencyFormat = NumberFormat.simpleCurrency(decimalDigits: 2);
 
     return Card(
-      margin: const EdgeInsets.only(bottom: ScreenUtils.spacingControl),
+      margin: EdgeInsets.only(bottom: ScreenUtils.spacingControl),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(ScreenUtils.margin),
+          padding: EdgeInsets.all(ScreenUtils.margin),
           child: Row(
             children: [
               // Icon container with soft accent background
@@ -44,7 +44,7 @@ class ExpenseCard extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              const SizedBox(width: ScreenUtils.margin),
+              SizedBox(width: ScreenUtils.margin),
               // Merchant / Title and Date details
               Expanded(
                 child: Column(
@@ -52,7 +52,7 @@ class ExpenseCard extends StatelessWidget {
                   children: [
                     Text(
                       expense.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: ScreenUtils.fontTextSmall,
@@ -63,7 +63,7 @@ class ExpenseCard extends StatelessWidget {
                     const SizedBox(height: 4),
                     Text(
                       formattedDate,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: ScreenUtils.fontTextSmaller,
                       ),
@@ -91,7 +91,7 @@ class ExpenseCard extends StatelessWidget {
                       width: 100,
                       child: Text(
                         expense.description!,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: ScreenUtils.fontTextTiny,
                           color: AppColors.textSecondary,
                           fontStyle: FontStyle.italic,

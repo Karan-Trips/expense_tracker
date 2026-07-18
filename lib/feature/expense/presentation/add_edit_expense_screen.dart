@@ -142,7 +142,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
           child: Form(
             key: _formKey,
             child: ListView(
-              padding: const EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
+              padding: EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
               children: [
                 FrostedCard(
                   opacity: 0.1,
@@ -165,7 +165,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: ScreenUtils.spacingStander),
+                      SizedBox(height: ScreenUtils.spacingStander),
                       // Amount input
                       TextFormField(
                         controller: _amountController,
@@ -188,13 +188,13 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: ScreenUtils.spacingStander),
+                      SizedBox(height: ScreenUtils.spacingStander),
                       // Date Picker Box
                       InkWell(
                         onTap: _pickDate,
                         borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
+                          padding: EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
                           decoration: BoxDecoration(
                             color: AppColors.surface.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
@@ -203,7 +203,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              const Text(
+                              Text(
                                 "Date",
                                 style: TextStyle(color: AppColors.textSecondary, fontSize: ScreenUtils.fontTextSmall),
                               ),
@@ -214,7 +214,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                                     builder: (context, selectedDate, _) {
                                       return Text(
                                         DateFormat('MMM dd, yyyy').format(selectedDate),
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                           fontSize: ScreenUtils.fontTextSmall,
@@ -222,7 +222,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                                       );
                                     },
                                   ),
-                                  const SizedBox(width: ScreenUtils.fieldSpace),
+                                  SizedBox(width: ScreenUtils.fieldSpace),
                                   const Icon(Icons.calendar_today, size: 16, color: AppColors.accentTeal),
                                 ],
                               ),
@@ -230,7 +230,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           ),
                         ),
                       ),
-                      const SizedBox(height: ScreenUtils.spacingStander),
+                      SizedBox(height: ScreenUtils.spacingStander),
                       // Description input
                       TextFormField(
                         controller: _descController,
@@ -244,9 +244,9 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(height: ScreenUtils.spacingStander),
+                SizedBox(height: ScreenUtils.spacingStander),
                 // Category header
-                const Text(
+                Text(
                   "Select Category",
                   style: TextStyle(
                     color: Colors.white,
@@ -254,7 +254,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: ScreenUtils.spacingControl),
+                SizedBox(height: ScreenUtils.spacingControl),
                 // Category grid/wrap selection
                 ValueListenableBuilder<ExpenseCategory>(
                   valueListenable: _selectedCategory,

@@ -8,8 +8,6 @@ import 'package:expense_tracker/widgets/expense_card.dart';
 import 'package:expense_tracker/widgets/chart_widgets.dart';
 import 'package:expense_tracker/feature/expense/presentation/expense_viewmodel.dart';
 
-
-
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -19,9 +17,14 @@ class HomeScreen extends ConsumerWidget {
     final expenses = expenseState.expenses;
 
     // Calculations
-    final double totalSpent = expenses.fold(0.0, (sum, item) => sum + item.amount);
-    final String formattedTotal = NumberFormat.simpleCurrency(decimalDigits: 2).format(totalSpent);
-    
+    final double totalSpent = expenses.fold(
+      0.0,
+      (sum, item) => sum + item.amount,
+    );
+    final String formattedTotal = NumberFormat.simpleCurrency(
+      decimalDigits: 2,
+    ).format(totalSpent);
+
     // Budget Calculations
     const double budget = 1500.0;
     final double percentage = (totalSpent / budget).clamp(0.0, 1.0);
@@ -44,7 +47,12 @@ class HomeScreen extends ConsumerWidget {
             color: AppColors.accentTeal,
             onRefresh: () => ref.read(expenseProvider.notifier).loadExpenses(),
             child: ListView(
-              padding: const EdgeInsets.fromLTRB(ScreenUtils.margin, ScreenUtils.margin, ScreenUtils.margin, 100),
+              padding: EdgeInsets.fromLTRB(
+                ScreenUtils.margin,
+                ScreenUtils.margin,
+                ScreenUtils.margin,
+                100,
+              ),
               children: [
                 // Premium Styled Header
                 Row(
@@ -56,7 +64,10 @@ class HomeScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         gradient: const LinearGradient(
-                          colors: [AppColors.accentPurple, AppColors.accentTeal],
+                          colors: [
+                            AppColors.accentPurple,
+                            AppColors.accentTeal,
+                          ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
@@ -83,7 +94,7 @@ class HomeScreen extends ConsumerWidget {
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             "Hello, Karan",
                             style: TextStyle(
@@ -92,8 +103,8 @@ class HomeScreen extends ConsumerWidget {
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          SizedBox(height: 2),
-                          Text(
+                          const SizedBox(height: 2),
+                          const Text(
                             "Aura Intelligence",
                             style: TextStyle(
                               color: Colors.white,
@@ -119,13 +130,17 @@ class HomeScreen extends ConsumerWidget {
                       ),
                       child: IconButton(
                         padding: EdgeInsets.zero,
-                        icon: const Icon(Icons.add, color: AppColors.accentTeal, size: 22),
+                        icon: const Icon(
+                          Icons.add,
+                          color: AppColors.accentTeal,
+                          size: 22,
+                        ),
                         onPressed: () => context.push('/add-expense'),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: ScreenUtils.margin * 1.5),
+                SizedBox(height: ScreenUtils.margin * 1.5),
                 // Frosted summary card
                 FrostedCard(
                   opacity: 0.12,
@@ -133,7 +148,7 @@ class HomeScreen extends ConsumerWidget {
                   borderRadius: ScreenUtils.kBorderRadius,
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         "TOTAL SPENDING THIS MONTH",
                         style: TextStyle(
                           color: AppColors.textSecondary,
@@ -145,7 +160,7 @@ class HomeScreen extends ConsumerWidget {
                       const SizedBox(height: 12),
                       Text(
                         formattedTotal,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: Colors.white,
                           fontSize: ScreenUtils.fontTextTitle,
                           fontWeight: FontWeight.w900,
@@ -170,7 +185,9 @@ class HomeScreen extends ConsumerWidget {
                               Text(
                                 "\$${totalSpent.toStringAsFixed(0)} / \$${budget.toStringAsFixed(0)}",
                                 style: TextStyle(
-                                  color: isOverBudget ? Colors.redAccent : AppColors.accentTeal,
+                                  color: isOverBudget
+                                      ? Colors.redAccent
+                                      : AppColors.accentTeal,
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -182,9 +199,13 @@ class HomeScreen extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(4),
                             child: LinearProgressIndicator(
                               value: percentage,
-                              backgroundColor: AppColors.border.withOpacity(0.4),
+                              backgroundColor: AppColors.border.withOpacity(
+                                0.4,
+                              ),
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                isOverBudget ? Colors.redAccent : AppColors.accentTeal,
+                                isOverBudget
+                                    ? Colors.redAccent
+                                    : AppColors.accentTeal,
                               ),
                               minHeight: 6,
                             ),
@@ -207,8 +228,9 @@ class HomeScreen extends ConsumerWidget {
                             label: "Avg. Spent",
                             value: expenses.isEmpty
                                 ? "\$0.00"
-                                : NumberFormat.simpleCurrency(decimalDigits: 0)
-                                    .format(totalSpent / expenses.length),
+                                : NumberFormat.simpleCurrency(
+                                    decimalDigits: 0,
+                                  ).format(totalSpent / expenses.length),
                           ),
                         ],
                       ),
@@ -220,7 +242,7 @@ class HomeScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       "Category Share",
                       style: TextStyle(
                         color: Colors.white,
@@ -229,7 +251,7 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
                     if (expenses.isNotEmpty)
-                      const Text(
+                      Text(
                         "All time",
                         style: TextStyle(
                           color: AppColors.textSecondary,
@@ -246,7 +268,7 @@ class HomeScreen extends ConsumerWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       "Recent Transactions",
                       style: TextStyle(
                         color: Colors.white,
@@ -256,9 +278,12 @@ class HomeScreen extends ConsumerWidget {
                     ),
                     TextButton(
                       onPressed: () => context.go('/expenses'),
-                      child: const Text(
+                      child: Text(
                         "See All",
-                        style: TextStyle(color: AppColors.accentTeal, fontSize: ScreenUtils.fontTextSmall),
+                        style: TextStyle(
+                          color: AppColors.accentTeal,
+                          fontSize: ScreenUtils.fontTextSmall,
+                        ),
                       ),
                     ),
                   ],
@@ -269,7 +294,9 @@ class HomeScreen extends ConsumerWidget {
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
                       color: AppColors.surface.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(ScreenUtils.kBorderRadius),
+                      borderRadius: BorderRadius.circular(
+                        ScreenUtils.kBorderRadius,
+                      ),
                       border: Border.all(color: AppColors.border),
                     ),
                     child: const Center(
@@ -280,10 +307,12 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   )
                 else
-                  ...recentExpenses.map((exp) => ExpenseCard(
-                        expense: exp,
-                        onTap: () => context.push('/add-expense', extra: exp),
-                      )),
+                  ...recentExpenses.map(
+                    (exp) => ExpenseCard(
+                      expense: exp,
+                      onTap: () => context.push('/add-expense', extra: exp),
+                    ),
+                  ),
               ],
             ),
           ),

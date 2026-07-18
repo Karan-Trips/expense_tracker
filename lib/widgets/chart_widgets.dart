@@ -50,7 +50,7 @@ class CategoryPieChart extends StatelessWidget {
                 widget: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text(
+                    Text(
                       "TOTAL",
                       style: TextStyle(
                         color: AppColors.textSecondary,
@@ -64,7 +64,7 @@ class CategoryPieChart extends StatelessWidget {
                       NumberFormat.simpleCurrency(
                         decimalDigits: 0,
                       ).format(grandTotal),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
                         fontSize: ScreenUtils.fontTextMBig,
                         fontWeight: FontWeight.w900,
@@ -82,14 +82,12 @@ class CategoryPieChart extends StatelessWidget {
                 pointColorMapper: (_PieData data, _) => data.color,
                 innerRadius: '72%',
                 radius: '90%',
-                dataLabelSettings: const DataLabelSettings(
-                  isVisible: false,
-                ),
-              )
+                dataLabelSettings: const DataLabelSettings(isVisible: false),
+              ),
             ],
           ),
         ),
-        const SizedBox(height: ScreenUtils.spacingControl),
+        SizedBox(height: ScreenUtils.spacingControl),
         // Legend
         Wrap(
           spacing: ScreenUtils.spacingControl,
@@ -112,7 +110,7 @@ class CategoryPieChart extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: ScreenUtils.fontTextSmaller,
                   ),
@@ -170,8 +168,18 @@ class MonthlyBarChart extends StatelessWidget {
     }
 
     final List<String> monthNames = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ];
 
     final List<_BarData> barData = [];
@@ -187,10 +195,10 @@ class MonthlyBarChart extends StatelessWidget {
       child: SfCartesianChart(
         plotAreaBorderWidth: 0,
         margin: EdgeInsets.zero,
-        primaryXAxis: const CategoryAxis(
+        primaryXAxis: CategoryAxis(
           majorGridLines: MajorGridLines(width: 0),
           axisLine: AxisLine(width: 0),
-          labelStyle: const TextStyle(
+          labelStyle: TextStyle(
             color: AppColors.textSecondary,
             fontSize: ScreenUtils.fontTextSmaller,
             fontWeight: FontWeight.bold,
@@ -203,7 +211,7 @@ class MonthlyBarChart extends StatelessWidget {
             color: AppColors.border.withOpacity(0.12),
             dashArray: const <double>[5, 5],
           ),
-          labelStyle: const TextStyle(
+          labelStyle: TextStyle(
             color: AppColors.textSecondary,
             fontSize: ScreenUtils.fontTextTiny,
             fontWeight: FontWeight.bold,
@@ -217,7 +225,7 @@ class MonthlyBarChart extends StatelessWidget {
           header: '',
           canShowMarker: false,
           format: 'point.y',
-          textStyle: const TextStyle(
+          textStyle: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
             fontSize: ScreenUtils.fontTextSmaller,
@@ -238,7 +246,7 @@ class MonthlyBarChart extends StatelessWidget {
               begin: Alignment.bottomCenter,
               end: Alignment.topCenter,
             ),
-          )
+          ),
         ],
       ),
     );

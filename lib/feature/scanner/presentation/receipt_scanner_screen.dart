@@ -141,7 +141,7 @@ class ReceiptScannerScreen extends ConsumerWidget {
                                 ),
                               ),
                             ),
-                             const SizedBox(width: ScreenUtils.margin),
+                             SizedBox(width: ScreenUtils.margin),
                              Expanded(
                                child: ElevatedButton.icon(
                                  onPressed: () => notifier.scanReceipt(),
@@ -156,7 +156,7 @@ class ReceiptScannerScreen extends ConsumerWidget {
                    else
                      // Selection Options (Solid Border Upload Area)
                      Container(
-                       padding: const EdgeInsets.symmetric(
+                       padding: EdgeInsets.symmetric(
                          vertical: ScreenUtils.keyboardRadius,
                          horizontal: ScreenUtils.fontTextMBig,
                        ),
@@ -168,7 +168,7 @@ class ReceiptScannerScreen extends ConsumerWidget {
                        child: Column(
                          children: [
                            Container(
-                             padding: const EdgeInsets.all(ScreenUtils.margin),
+                             padding: EdgeInsets.all(ScreenUtils.margin),
                              decoration: BoxDecoration(
                                color: AppColors.accentTeal.withOpacity(0.1),
                                shape: BoxShape.circle,
@@ -179,8 +179,8 @@ class ReceiptScannerScreen extends ConsumerWidget {
                                color: AppColors.accentTeal,
                              ),
                            ),
-                           const SizedBox(height: ScreenUtils.fontTextMBig),
-                           const Text(
+                           SizedBox(height: ScreenUtils.fontTextMBig),
+                           Text(
                              "Upload Receipt Image",
                              style: TextStyle(
                                color: Colors.white,
@@ -189,7 +189,7 @@ class ReceiptScannerScreen extends ConsumerWidget {
                              ),
                            ),
                            const SizedBox(height: 6),
-                           const Text(
+                           Text(
                              "Select receipt source to begin the AI scan",
                              style: TextStyle(
                                color: AppColors.textSecondary,

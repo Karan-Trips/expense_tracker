@@ -6,7 +6,7 @@ class FrostedCard extends StatelessWidget {
   final Widget child;
   final double blur;
   final double opacity;
-  final double borderRadius;
+  final double? borderRadius;
   final EdgeInsetsGeometry? padding;
   final EdgeInsetsGeometry? margin;
   final Color? borderColor;
@@ -16,18 +16,21 @@ class FrostedCard extends StatelessWidget {
     required this.child,
     this.blur = 15.0,
     this.opacity = 0.08,
-    this.borderRadius = ScreenUtils.cardCircularRadius,
-    this.padding = const EdgeInsets.all(ScreenUtils.margin),
+    this.borderRadius,
+    this.padding,
     this.margin,
     this.borderColor,
   });
 
   @override
   Widget build(BuildContext context) {
+    final resolvedRadius = borderRadius ?? ScreenUtils.cardCircularRadius;
+    final resolvedPadding = padding ?? EdgeInsets.all(ScreenUtils.margin);
+
     return Container(
       margin: margin,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(resolvedRadius),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.2),
@@ -37,14 +40,14 @@ class FrostedCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(resolvedRadius),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
           child: Container(
-            padding: padding,
+            padding: resolvedPadding,
             decoration: BoxDecoration(
               color: AppColors.surface.withOpacity(opacity),
-              borderRadius: BorderRadius.circular(borderRadius),
+              borderRadius: BorderRadius.circular(resolvedRadius),
               border: Border.all(
                 color: borderColor ?? AppColors.border.withOpacity(0.4),
                 width: 1.0,

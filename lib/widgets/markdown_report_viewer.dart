@@ -12,25 +12,25 @@ class MarkdownReportViewer extends StatelessWidget {
     return MarkdownBody(
       data: markdown,
       styleSheet: MarkdownStyleSheet(
-        h1: const TextStyle(
+        h1: TextStyle(
           color: Colors.white,
           fontSize: ScreenUtils.fontTextMBig,
           fontWeight: FontWeight.w900,
           height: 1.6,
         ),
-        h2: const TextStyle(
+        h2: TextStyle(
           color: AppColors.accentTeal,
           fontSize: ScreenUtils.fontText,
           fontWeight: FontWeight.w800,
           height: 1.5,
         ),
-        h3: const TextStyle(
+        h3: TextStyle(
           color: AppColors.accentTeal,
           fontSize: ScreenUtils.fontTextSmall,
           fontWeight: FontWeight.bold,
           height: 1.5,
         ),
-        p: const TextStyle(
+        p: TextStyle(
           color: AppColors.textSecondary,
           fontSize: ScreenUtils.fontTextSmall,
           height: 1.5,
@@ -39,7 +39,7 @@ class MarkdownReportViewer extends StatelessWidget {
           fontWeight: FontWeight.bold,
           color: Colors.white,
         ),
-        listBullet: const TextStyle(
+        listBullet: TextStyle(
           color: AppColors.accentTeal,
           fontSize: ScreenUtils.fontTextSmall,
         ),

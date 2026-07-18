@@ -61,8 +61,8 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
           child: Column(
             children: [
               // Search Input
-              Padding(
-                padding: const EdgeInsets.symmetric(
+               Padding(
+                padding: EdgeInsets.symmetric(
                   horizontal: ScreenUtils.margin,
                   vertical: ScreenUtils.spacingStandardControl,
                 ),
@@ -102,7 +102,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                   builder: (context, selectedCategory, _) {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                         horizontal: ScreenUtils.margin,
                       ),
                       itemCount: ExpenseCategory.values.length + 1,
@@ -111,7 +111,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                           // "All" option
                           final isSelected = selectedCategory == null;
                           return Padding(
-                            padding: const EdgeInsets.only(
+                            padding: EdgeInsets.only(
                               right: ScreenUtils.spacingStandardControl,
                             ),
                             child: ChoiceChip(
@@ -140,7 +140,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                         final isSelected = selectedCategory == cat;
 
                         return Padding(
-                          padding: const EdgeInsets.only(
+                          padding: EdgeInsets.only(
                             right: ScreenUtils.spacingStandardControl,
                           ),
                           child: CategoryChip(
@@ -156,7 +156,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                   },
                 ),
               ),
-              const SizedBox(height: ScreenUtils.spacingControl),
+              SizedBox(height: ScreenUtils.spacingControl),
               // History list
               Expanded(
                 child: AnimatedBuilder(
@@ -237,7 +237,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                       onRefresh: () =>
                           ref.read(expenseProvider.notifier).loadExpenses(),
                       child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(
+                        padding: EdgeInsets.fromLTRB(
                           ScreenUtils.margin,
                           0,
                           ScreenUtils.margin,
@@ -284,7 +284,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                             background: Container(
                               alignment: Alignment.centerRight,
                               padding: const EdgeInsets.only(right: 20.0),
-                              margin: const EdgeInsets.only(
+                              margin: EdgeInsets.only(
                                 bottom: ScreenUtils.spacingControl,
                               ),
                               decoration: BoxDecoration(

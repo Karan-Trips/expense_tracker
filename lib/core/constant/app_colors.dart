@@ -14,7 +14,7 @@ class AppTheme {
         surface: AppColors.surface,
         error: Colors.redAccent,
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -25,7 +25,7 @@ class AppTheme {
           letterSpacing: 1.0,
         ),
       ),
-      fontFamily: 'Roboto', // Default fall-back, customizable
+      fontFamily: 'Roboto',
       cardTheme: CardThemeData(
         color: AppColors.surface.withOpacity(0.7),
         shape: RoundedRectangleBorder(
@@ -38,12 +38,12 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.accentTeal,
           foregroundColor: AppColors.background,
-          minimumSize: const Size.fromHeight(ScreenUtils.buttonHeight),
+          minimumSize: Size.fromHeight(ScreenUtils.buttonHeight),
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(ScreenUtils.kBorderRadius),
           ),
-          textStyle: const TextStyle(
+          textStyle: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: ScreenUtils.fontButton,
           ),

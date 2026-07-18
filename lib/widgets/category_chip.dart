@@ -24,7 +24,7 @@ class CategoryChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(
+        padding: EdgeInsets.symmetric(
           horizontal: ScreenUtils.fontTextSmall,
           vertical: ScreenUtils.spacingStandardControl,
         ),

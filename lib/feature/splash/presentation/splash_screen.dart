@@ -102,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              const Text(
+              Text(
                 "AI EXPENSE TRACKER",
                 style: TextStyle(
                   color: AppColors.textSecondary,
@@ -151,11 +151,11 @@ class _SplashScreenState extends State<SplashScreen> {
                       child: Column(
                         children: [
                           const Icon(Icons.warning_amber_rounded, color: Colors.amberAccent, size: 40),
-                          const SizedBox(height: ScreenUtils.spacingControl),
+                          SizedBox(height: ScreenUtils.spacingControl),
                           Text(
                             errorText,
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: Colors.redAccent,
                               fontSize: ScreenUtils.fontTextSmall,
                             ),
