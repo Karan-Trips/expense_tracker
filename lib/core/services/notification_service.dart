@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_filex/open_filex.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -29,7 +29,7 @@ class NotificationService {
         final String? filePath = response.payload;
         if (filePath != null && filePath.isNotEmpty) {
           try {
-            await OpenFile.open(filePath);
+            await OpenFilex.open(filePath);
           } catch (e) {
             debugPrint("Error opening file: $e");
           }
@@ -45,7 +45,7 @@ class NotificationService {
       if (filePath != null && filePath.isNotEmpty) {
         Future.delayed(const Duration(milliseconds: 600), () async {
           try {
-            await OpenFile.open(filePath);
+            await OpenFilex.open(filePath);
           } catch (e) {
             debugPrint("Error opening launch file: $e");
           }
