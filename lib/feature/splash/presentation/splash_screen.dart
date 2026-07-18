@@ -5,7 +5,6 @@ import 'package:lottie/lottie.dart';
 import '../../../core/services/db_service.dart';
 import '../../../core/locator/locator.dart';
 import '../../../core/constant/app_colors.dart';
-import '../../../core/services/notification_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -42,9 +41,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
       _statusText.value = "Injecting App Modules...";
       await setupLocator();
-
-      _statusText.value = "Configuring Local Notification Channels...";
-      await NotificationService.init();
 
       await Future.delayed(const Duration(milliseconds: 1200));
 

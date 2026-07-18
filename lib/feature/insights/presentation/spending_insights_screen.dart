@@ -180,7 +180,6 @@ class SpendingInsightsScreen extends ConsumerWidget {
                         children: [
                           // Custom Action Bar
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               // Custom Aura Chip
                               Container(
@@ -213,52 +212,6 @@ class SpendingInsightsScreen extends ConsumerWidget {
                                       ),
                                     ),
                                   ],
-                                ),
-                              ),
-                              // Custom Download Button
-                              TextButton.icon(
-                                style: TextButton.styleFrom(
-                                  foregroundColor: AppColors.accentPurple,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 4,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                    side: BorderSide(
-                                      color: AppColors.accentPurple.withOpacity(0.3),
-                                      width: 1,
-                                    ),
-                                  ),
-                                  backgroundColor: AppColors.accentPurple.withOpacity(0.06),
-                                ),
-                                onPressed: () async {
-                                  final path = await ref
-                                      .read(insightsProvider.notifier)
-                                      .saveReportToFile(
-                                        insightsState.reportMarkdown!,
-                                      );
-                                  if (context.mounted && path.isNotEmpty) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(
-                                          "Report saved to Documents: ${path.split('/').last}",
-                                        ),
-                                        backgroundColor: AppColors.accentPurple,
-                                      ),
-                                    );
-                                  }
-                                },
-                                icon: const Icon(
-                                  Icons.download_rounded,
-                                  size: 13,
-                                ),
-                                label: const Text(
-                                  "Download",
-                                  style: TextStyle(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.bold,
-                                  ),
                                 ),
                               ),
                             ],
