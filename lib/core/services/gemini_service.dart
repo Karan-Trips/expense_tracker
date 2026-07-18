@@ -58,7 +58,7 @@ class GeminiService {
       );
 
       _textModel = GenerativeModel(
-        model: 'gemini-1.5-pro',
+        model: 'gemini-1.5-flash',
         apiKey: apiKey,
         systemInstruction: Content.system(
           'You are Aura, an elite AI Wealth Management Consultant. Your tone is motivating, strategic, and highly professional. You analyze transaction logs in Indian Rupees (INR) and deliver wealth-building strategies.',

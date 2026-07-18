@@ -42,7 +42,8 @@ class ReceiptScannerScreen extends ConsumerWidget {
     }
 
     // Parse description
-    final String? description = data['description'];
+    final bool isFallback = data['isFallback'] == true;
+    final String? description = isFallback ? null : data['description'];
 
     // Create a draft expense
     final draftExpense = Expense(
@@ -54,6 +55,7 @@ class ReceiptScannerScreen extends ConsumerWidget {
       description: description,
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
+      isScanFallback: isFallback,
     );
 
     // Show warning snackbar if fallback data was generated

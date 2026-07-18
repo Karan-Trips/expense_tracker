@@ -144,6 +144,77 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
             child: ListView(
               padding: EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
               children: [
+                if (widget.expense != null && widget.expense!.isScanFallback) ...[
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.orangeAccent.withOpacity(0.15),
+                          Colors.redAccent.withOpacity(0.05),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(ScreenUtils.kBorderRadius),
+                      border: Border.all(
+                        color: Colors.orangeAccent.withOpacity(0.35),
+                        width: 1.2,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.orangeAccent.withOpacity(0.2),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.cloud_off_rounded,
+                            size: 20,
+                            color: Colors.orangeAccent,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text(
+                                "AI Offline / Limit Fallback",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 0.3,
+                                ),
+                              ),
+                              SizedBox(height: 4),
+                              Text(
+                                "Gemini is offline or limit was reached. Please verify and enter the transaction details manually.",
+                                style: TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 11,
+                                  height: 1.4,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 24),
                 const Center(
                   child: Text(

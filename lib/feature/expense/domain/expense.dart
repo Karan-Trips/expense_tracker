@@ -32,6 +32,9 @@ class Expense extends HiveObject {
   @HiveField(8)
   final DateTime updatedAt;
 
+  // Non-persisted field to track if this came from a scanner fallback
+  final bool isScanFallback;
+
   Expense({
     required this.id,
     required this.title,
@@ -42,6 +45,7 @@ class Expense extends HiveObject {
     this.receiptImagePath,
     required this.createdAt,
     required this.updatedAt,
+    this.isScanFallback = false,
   });
 
   ExpenseCategory get category {
@@ -61,6 +65,7 @@ class Expense extends HiveObject {
     String? receiptImagePath,
     DateTime? createdAt,
     DateTime? updatedAt,
+    bool? isScanFallback,
   }) {
     return Expense(
       id: id ?? this.id,
@@ -72,6 +77,7 @@ class Expense extends HiveObject {
       receiptImagePath: receiptImagePath ?? this.receiptImagePath,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      isScanFallback: isScanFallback ?? this.isScanFallback,
     );
   }
 }
