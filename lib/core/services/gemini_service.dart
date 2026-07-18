@@ -183,26 +183,22 @@ class GeminiService {
     Transactions:
     $expensesJson
 
-    Your report MUST contain these four clearly marked Markdown sections:
+    Your report MUST contain these five clearly marked Markdown sections:
 
-    ### 📊 Spending Analysis & Run-Rate Projections
-    - State the total spent, transaction count, and the single largest transaction (with merchant name).
-    - Provide a breakdown of category ratios (e.g., Shopping vs. Food). Highlight areas where the user is overspending.
-    - **Run-Rate Projection**: Estimate their month-end total spending based on their current transaction frequency and velocity, advising if they are on track to exceed their baseline budget.
+    ### 💰 Total Spending
+    - State the total spent and transaction count in Rupees (₹). Summarize whether this is within a healthy monthly budget baseline.
 
-    ### 💰 Savings Strategy (What to Save)
-    - Provide concrete recommendations on how much of their budget/income they should target to save.
-    - Suggest building an emergency fund (e.g., targeting 3-6 months of their typical spending baseline).
-    - Detail specific savings goals based on their current spending behaviors.
+    ### 📊 Category-wise Breakdown
+    - Provide a breakdown of spending ratios across the categories (e.g., Food, Shopping, Travel, etc.). Highlight which category consumed the highest percentage of the budget.
 
-    ### 🛡️ Money Management Advice (How to Manage)
-    - Give actionable tips on how they can better structure and track their monthly cash flow.
-    - Recommend budgeting frameworks (like the 50/30/20 rule: 50% Needs, 30% Wants, 20% Savings) customized to their transaction baseline.
-    - Detail 2-3 specific rules they should enforce next month (e.g. setting custom category caps, shopping list delays).
+    ### 🛍️ Largest Expenses
+    - Identify and list the largest individual transactions, stating the merchant names, amounts, and dates.
 
-    ### 🎯 Wealth Building Challenges & Action Items
-    - Create a gamified weekly savings challenge (e.g. "The 7-Day No-Shopping Challenge" or "Brew-Your-Own-Coffee week") designed around their highest category.
-    - Suggest specific automation triggers (e.g. "Set up an automatic transfer of ₹500 to your savings account right after salary credit").
+    ### 📈 Spending Trends
+    - Outline spending trends (e.g., monthly run-rate projection, transaction velocity, or category comparisons).
+
+    ### 💡 Actionable Recommendations
+    - Provide at least one highly personalized, concrete recommendation based on their transactions (e.g. "You spent 35% more on food delivery this month compared to last month. Consider setting a monthly dining budget.").
 
     Format the entire response in beautiful, clean Markdown. Use bold headers, bullet lists, and highlight key figures for readability. Do not mention dollars (\$); always use Rupees (₹).
     ''';
