@@ -21,6 +21,11 @@ class HomeScreen extends ConsumerWidget {
     // Calculations
     final double totalSpent = expenses.fold(0.0, (sum, item) => sum + item.amount);
     final String formattedTotal = NumberFormat.simpleCurrency(decimalDigits: 2).format(totalSpent);
+    
+    // Budget Calculations
+    const double budget = 1500.0;
+    final double percentage = (totalSpent / budget).clamp(0.0, 1.0);
+    final bool isOverBudget = totalSpent > budget;
 
     // Get recent 3 expenses
     final recentExpenses = expenses.take(3).toList();
@@ -29,7 +34,7 @@ class HomeScreen extends ConsumerWidget {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.background, Color(0xFF0D0D1F)],
+            colors: [AppColors.background, Color(0xFF0F1322)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -41,40 +46,86 @@ class HomeScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.fromLTRB(ScreenUtils.margin, ScreenUtils.margin, ScreenUtils.margin, 100),
               children: [
-                // Custom Header
+                // Premium Styled Header
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          "Welcome Back",
-                          style: TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: ScreenUtils.fontTextSmall,
-                            fontWeight: FontWeight.w500,
-                          ),
+                    // Profile avatar placeholder
+                    Container(
+                      width: 42,
+                      height: 42,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        gradient: const LinearGradient(
+                          colors: [AppColors.accentPurple, AppColors.accentTeal],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                        SizedBox(height: 4),
-                        Text(
-                          "Aura Tracker",
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.accentPurple.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "KT",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: ScreenUtils.fontTextBig,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
                           ),
                         ),
-                      ],
+                      ),
                     ),
-                    // Shortcut to add manually
-                    IconButton(
-                      icon: const Icon(Icons.add_circle, color: AppColors.accentTeal, size: 32),
-                      onPressed: () => context.push('/add-expense'),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "Hello, Karan",
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: ScreenUtils.fontTextSmall,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 2),
+                          Text(
+                            "Aura Intelligence",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Action Shortcut add button
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.accentTeal.withOpacity(0.12),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.accentTeal.withOpacity(0.35),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: IconButton(
+                        padding: EdgeInsets.zero,
+                        icon: const Icon(Icons.add, color: AppColors.accentTeal, size: 22),
+                        onPressed: () => context.push('/add-expense'),
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: ScreenUtils.margin),
+                const SizedBox(height: ScreenUtils.margin * 1.5),
                 // Frosted summary card
                 FrostedCard(
                   opacity: 0.12,
@@ -100,9 +151,49 @@ class HomeScreen extends ConsumerWidget {
                           fontWeight: FontWeight.w900,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
+                      // Sleek Budget Progress Indicator
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Budget Progress (${(percentage * 100).toStringAsFixed(0)}%)",
+                                style: const TextStyle(
+                                  color: AppColors.textSecondary,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                "\$${totalSpent.toStringAsFixed(0)} / \$${budget.toStringAsFixed(0)}",
+                                style: TextStyle(
+                                  color: isOverBudget ? Colors.redAccent : AppColors.accentTeal,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: LinearProgressIndicator(
+                              value: percentage,
+                              backgroundColor: AppColors.border.withOpacity(0.4),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                isOverBudget ? Colors.redAccent : AppColors.accentTeal,
+                              ),
+                              minHeight: 6,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
                       Divider(color: AppColors.border.withOpacity(0.5)),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [

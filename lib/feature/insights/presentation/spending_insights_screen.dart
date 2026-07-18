@@ -4,6 +4,7 @@ import '../../../core/constant/app_colors.dart';
 import '../../../widgets/chart_widgets.dart';
 import '../../../widgets/frosted_card.dart';
 import '../../../widgets/loading_overlay.dart';
+import '../../../widgets/markdown_report_viewer.dart';
 import '../../expense/presentation/expense_viewmodel.dart';
 import 'insights_viewmodel.dart';
 
@@ -77,13 +78,8 @@ class SpendingInsightsScreen extends ConsumerWidget {
                   if (insightsState.status == InsightsStatus.success && insightsState.reportMarkdown != null)
                     FrostedCard(
                       opacity: 0.1,
-                      child: SelectableText(
-                        insightsState.reportMarkdown!,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 14,
-                          height: 1.5,
-                        ),
+                      child: MarkdownReportViewer(
+                        markdown: insightsState.reportMarkdown!,
                       ),
                     )
                   else if (insightsState.status == InsightsStatus.error && insightsState.errorMessage != null)

@@ -49,17 +49,17 @@ class AppConstants {
   static Color getCategoryColor(ExpenseCategory category) {
     switch (category) {
       case ExpenseCategory.food:
-        return const Color(0xFFFF5252); // Coral/Red
+        return const Color(0xFFFF7A59); // Coral Rose
       case ExpenseCategory.shopping:
-        return const Color(0xFFFFEB3B); // Yellow
+        return const Color(0xFFF59E0B); // Deep Amber Gold
       case ExpenseCategory.travel:
-        return const Color(0xFF00E676); // Emerald Green
+        return const Color(0xFF10B981); // Seafoam Emerald
       case ExpenseCategory.utilities:
-        return const Color(0xFF29B6F6); // Sky Blue
+        return const Color(0xFF3B82F6); // Royal Blue
       case ExpenseCategory.entertainment:
-        return const Color(0xFFAB47BC); // Purple
+        return const Color(0xFF8B5CF6); // Orchid Violet
       case ExpenseCategory.others:
-        return const Color(0xFF90A4AE); // Grey-Blue
+        return const Color(0xFF64748B); // Cool Slate Grey
     }
   }
 }

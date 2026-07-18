@@ -1,6 +1,8 @@
+import 'package:expense_tracker/feature/expense/domain/expense.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_constants.dart';
 import '../../../widgets/category_chip.dart';
@@ -15,8 +17,24 @@ class ExpenseListScreen extends ConsumerStatefulWidget {
 }
 
 class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
-  final ValueNotifier<ExpenseCategory?> _selectedCategory = ValueNotifier<ExpenseCategory?>(null);
+  final ValueNotifier<ExpenseCategory?> _selectedCategory =
+      ValueNotifier<ExpenseCategory?>(null);
   final TextEditingController _searchController = TextEditingController();
+
+  String _getDateHeader(DateTime date) {
+    final now = DateTime.now();
+    final todayMidnight = DateTime(now.year, now.month, now.day);
+    final yesterdayMidnight = todayMidnight.subtract(const Duration(days: 1));
+    final checkMidnight = DateTime(date.year, date.month, date.day);
+
+    if (checkMidnight == todayMidnight) {
+      return "Today";
+    } else if (checkMidnight == yesterdayMidnight) {
+      return "Yesterday";
+    } else {
+      return DateFormat('MMMM dd, yyyy').format(date);
+    }
+  }
 
   @override
   void dispose() {
@@ -30,9 +48,7 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
     final expenseState = ref.watch(expenseProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Transaction History"),
-      ),
+      appBar: AppBar(title: const Text("Transaction History")),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -57,10 +73,16 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                     return TextField(
                       controller: _searchController,
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.search, color: AppColors.textSecondary),
+                        prefixIcon: const Icon(
+                          Icons.search,
+                          color: AppColors.textSecondary,
+                        ),
                         suffixIcon: query.isNotEmpty
                             ? IconButton(
-                                icon: const Icon(Icons.clear, color: AppColors.textSecondary),
+                                icon: const Icon(
+                                  Icons.clear,
+                                  color: AppColors.textSecondary,
+                                ),
                                 onPressed: () {
                                   _searchController.clear();
                                 },
@@ -80,22 +102,32 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                   builder: (context, selectedCategory, _) {
                     return ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      padding: const EdgeInsets.symmetric(horizontal: ScreenUtils.margin),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: ScreenUtils.margin,
+                      ),
                       itemCount: ExpenseCategory.values.length + 1,
                       itemBuilder: (context, index) {
                         if (index == 0) {
                           // "All" option
                           final isSelected = selectedCategory == null;
                           return Padding(
-                            padding: const EdgeInsets.only(right: ScreenUtils.spacingStandardControl),
+                            padding: const EdgeInsets.only(
+                              right: ScreenUtils.spacingStandardControl,
+                            ),
                             child: ChoiceChip(
                               label: const Text("All"),
                               selected: isSelected,
-                              selectedColor: AppColors.accentTeal.withOpacity(0.2),
+                              selectedColor: AppColors.accentTeal.withOpacity(
+                                0.2,
+                              ),
                               backgroundColor: AppColors.surface,
                               labelStyle: TextStyle(
-                                color: isSelected ? AppColors.accentTeal : AppColors.textSecondary,
-                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                color: isSelected
+                                    ? AppColors.accentTeal
+                                    : AppColors.textSecondary,
+                                fontWeight: isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
                               ),
                               onSelected: (_) {
                                 _selectedCategory.value = null;
@@ -108,7 +140,9 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                         final isSelected = selectedCategory == cat;
 
                         return Padding(
-                          padding: const EdgeInsets.only(right: ScreenUtils.spacingStandardControl),
+                          padding: const EdgeInsets.only(
+                            right: ScreenUtils.spacingStandardControl,
+                          ),
                           child: CategoryChip(
                             category: cat,
                             isSelected: isSelected,
@@ -126,7 +160,10 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
               // History list
               Expanded(
                 child: AnimatedBuilder(
-                  animation: Listenable.merge([_selectedCategory, _searchController]),
+                  animation: Listenable.merge([
+                    _selectedCategory,
+                    _searchController,
+                  ]),
                   builder: (context, _) {
                     final query = _searchController.text.trim();
                     final selectedCategory = _selectedCategory.value;
@@ -136,14 +173,20 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                     // Apply Category Filter
                     if (selectedCategory != null) {
                       filteredExpenses = filteredExpenses
-                          .where((e) => e.categoryIndex == selectedCategory.index)
+                          .where(
+                            (e) => e.categoryIndex == selectedCategory.index,
+                          )
                           .toList();
                     }
 
                     // Apply Search Query Filter
                     if (query.isNotEmpty) {
                       filteredExpenses = filteredExpenses
-                          .where((e) => e.title.toLowerCase().contains(query.toLowerCase()))
+                          .where(
+                            (e) => e.title.toLowerCase().contains(
+                              query.toLowerCase(),
+                            ),
+                          )
                           .toList();
                     }
 
@@ -152,7 +195,11 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: const [
-                            Icon(Icons.search_off, size: 48, color: AppColors.textSecondary),
+                            Icon(
+                              Icons.search_off,
+                              size: 48,
+                              color: AppColors.textSecondary,
+                            ),
                             SizedBox(height: 12),
                             Text(
                               "No matching transactions found",
@@ -163,14 +210,73 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                       );
                     }
 
+                    // Sort descending by date
+                    final sortedExpenses = List<Expense>.from(filteredExpenses)
+                      ..sort((a, b) => b.date.compareTo(a.date));
+
+                    // Group expenses by Date
+                    final List<dynamic> listItems = [];
+                    DateTime? currentDate;
+
+                    for (final exp in sortedExpenses) {
+                      final expenseDateMidnight = DateTime(
+                        exp.date.year,
+                        exp.date.month,
+                        exp.date.day,
+                      );
+                      if (currentDate == null ||
+                          currentDate != expenseDateMidnight) {
+                        currentDate = expenseDateMidnight;
+                        listItems.add(currentDate);
+                      }
+                      listItems.add(exp);
+                    }
+
                     return RefreshIndicator(
                       color: AppColors.accentTeal,
-                      onRefresh: () => ref.read(expenseProvider.notifier).loadExpenses(),
+                      onRefresh: () =>
+                          ref.read(expenseProvider.notifier).loadExpenses(),
                       child: ListView.builder(
-                        padding: const EdgeInsets.fromLTRB(ScreenUtils.margin, 0, ScreenUtils.margin, 100),
-                        itemCount: filteredExpenses.length,
+                        padding: const EdgeInsets.fromLTRB(
+                          ScreenUtils.margin,
+                          0,
+                          ScreenUtils.margin,
+                          100,
+                        ),
+                        itemCount: listItems.length,
                         itemBuilder: (context, index) {
-                          final expense = filteredExpenses[index];
+                          final item = listItems[index];
+
+                          if (item is DateTime) {
+                            return Padding(
+                              padding: const EdgeInsets.only(
+                                top: 24.0,
+                                bottom: 12.0,
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    _getDateHeader(item),
+                                    style: const TextStyle(
+                                      color: AppColors.textSecondary,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.2,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Divider(
+                                      color: AppColors.border.withOpacity(0.35),
+                                      thickness: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          final expense = item as Expense;
 
                           return Dismissible(
                             key: Key(expense.id),
@@ -178,16 +284,27 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                             background: Container(
                               alignment: Alignment.centerRight,
                               padding: const EdgeInsets.only(right: 20.0),
-                              margin: const EdgeInsets.only(bottom: ScreenUtils.spacingControl),
+                              margin: const EdgeInsets.only(
+                                bottom: ScreenUtils.spacingControl,
+                              ),
                               decoration: BoxDecoration(
                                 color: Colors.redAccent.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
-                                border: Border.all(color: Colors.redAccent.withOpacity(0.4)),
+                                borderRadius: BorderRadius.circular(
+                                  ScreenUtils.cardCircularRadius,
+                                ),
+                                border: Border.all(
+                                  color: Colors.redAccent.withOpacity(0.4),
+                                ),
                               ),
-                              child: const Icon(Icons.delete, color: Colors.redAccent),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.redAccent,
+                              ),
                             ),
                             onDismissed: (direction) async {
-                              final notifier = ref.read(expenseProvider.notifier);
+                              final notifier = ref.read(
+                                expenseProvider.notifier,
+                              );
                               final messenger = ScaffoldMessenger.of(context);
                               await notifier.deleteExpense(expense.id);
 
@@ -206,7 +323,8 @@ class _ExpenseListScreenState extends ConsumerState<ExpenseListScreen> {
                             },
                             child: ExpenseCard(
                               expense: expense,
-                              onTap: () => context.push('/add-expense', extra: expense),
+                              onTap: () =>
+                                  context.push('/add-expense', extra: expense),
                             ),
                           );
                         },

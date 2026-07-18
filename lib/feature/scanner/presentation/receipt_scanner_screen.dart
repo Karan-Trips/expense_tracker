@@ -16,7 +16,7 @@ class ReceiptScannerScreen extends ConsumerWidget {
   void _onScanSuccess(BuildContext context, Map<String, dynamic> data) {
     // Parse merchant title
     final String merchant = data['merchant'] ?? "Unknown Merchant";
-    
+
     // Parse amount safely
     double amount = 0.00;
     if (data['amount'] != null) {
@@ -74,9 +74,7 @@ class ReceiptScannerScreen extends ConsumerWidget {
     });
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("AI Receipt Scanner"),
-      ),
+      appBar: AppBar(title: const Text("AI Receipt Scanner")),
       body: Stack(
         children: [
           Container(
@@ -108,7 +106,7 @@ class ReceiptScannerScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // Image Display Area
                   if (scanState.imagePath != null)
                     Column(
@@ -133,8 +131,14 @@ class ReceiptScannerScreen extends ConsumerWidget {
                             Expanded(
                               child: TextButton.icon(
                                 onPressed: notifier.reset,
-                                icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-                                label: const Text("Clear Image", style: TextStyle(color: Colors.redAccent)),
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.redAccent,
+                                ),
+                                label: const Text(
+                                  "Clear Image",
+                                  style: TextStyle(color: Colors.redAccent),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 16),
@@ -150,46 +154,72 @@ class ReceiptScannerScreen extends ConsumerWidget {
                       ],
                     )
                   else
-                    // Selection Options (Frosted Card)
-                    FrostedCard(
-                      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+                    // Selection Options (Solid Border Upload Area)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 40,
+                        horizontal: 20,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface.withOpacity(0.4),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.border, width: 1.5),
+                      ),
                       child: Column(
                         children: [
-                          const Icon(
-                            Icons.receipt_long,
-                            size: 64,
-                            color: AppColors.accentTeal,
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.accentTeal.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.cloud_upload_outlined,
+                              size: 48,
+                              color: AppColors.accentTeal,
+                            ),
                           ),
                           const SizedBox(height: 20),
                           const Text(
-                            "Select receipt image source",
+                            "Upload Receipt Image",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 15,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 6),
+                          const Text(
+                            "Select receipt source to begin the AI scan",
+                            style: TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                          const SizedBox(height: 28),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               _buildSourceButton(
                                 icon: Icons.camera_alt,
                                 label: "Camera",
-                                onTap: () => notifier.pickImage(ImageSource.camera),
+                                onTap: () =>
+                                    notifier.pickImage(ImageSource.camera),
                               ),
                               _buildSourceButton(
                                 icon: Icons.photo_library,
                                 label: "Gallery",
-                                onTap: () => notifier.pickImage(ImageSource.gallery),
+                                onTap: () =>
+                                    notifier.pickImage(ImageSource.gallery),
                               ),
                             ],
                           ),
                         ],
                       ),
                     ),
-                  
-                  if (scanState.status == ScanStatus.error && scanState.errorMessage != null) ...[
+
+                  if (scanState.status == ScanStatus.error &&
+                      scanState.errorMessage != null) ...[
                     const SizedBox(height: 24),
                     FrostedCard(
                       borderColor: Colors.redAccent.withOpacity(0.4),
@@ -198,7 +228,11 @@ class ReceiptScannerScreen extends ConsumerWidget {
                         children: [
                           Row(
                             children: const [
-                              Icon(Icons.error_outline, color: Colors.redAccent, size: 20),
+                              Icon(
+                                Icons.error_outline,
+                                color: Colors.redAccent,
+                                size: 20,
+                              ),
                               SizedBox(width: 8),
                               Text(
                                 "Scanning Failed",
@@ -212,7 +246,10 @@ class ReceiptScannerScreen extends ConsumerWidget {
                           const SizedBox(height: 8),
                           Text(
                             scanState.errorMessage!,
-                            style: const TextStyle(color: Colors.white, fontSize: 13),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
                           ),
                         ],
                       ),
@@ -222,10 +259,12 @@ class ReceiptScannerScreen extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // Full screen loading indicator
           if (scanState.status == ScanStatus.scanning)
-            const LoadingOverlay(message: "Gemini is analyzing your receipt..."),
+            const LoadingOverlay(
+              message: "Gemini is analyzing your receipt...",
+            ),
         ],
       ),
     );
@@ -238,23 +277,30 @@ class ReceiptScannerScreen extends ConsumerWidget {
   }) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         decoration: BoxDecoration(
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Column(
           children: [
-            Icon(icon, size: 28, color: AppColors.accentTeal),
+            Icon(icon, size: 24, color: AppColors.accentTeal),
             const SizedBox(height: 8),
             Text(
               label,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -264,3 +310,5 @@ class ReceiptScannerScreen extends ConsumerWidget {
     );
   }
 }
+
+

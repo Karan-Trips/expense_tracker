@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
       // Set up GetIt DI
       await setupLocator();
 
-      // Small delay for clean aesthetics
+      // Delay for presentation/aesthetics
       await Future.delayed(const Duration(milliseconds: 1200));
 
       if (mounted) {
@@ -61,7 +61,7 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [AppColors.background, Color(0xFF0F0E26)],
+            colors: [AppColors.background, Color(0xFF0F1220)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -70,43 +70,53 @@ class _SplashScreenState extends State<SplashScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Logo/Aesthetic Banner
+              // Styled static logo with soft glow shadow
               Container(
-                padding: const EdgeInsets.all(24),
+                padding: const EdgeInsets.all(26),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: const RadialGradient(
-                    colors: [Color(0x3300FFCC), Colors.transparent],
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.accentTeal.withOpacity(0.25),
+                      blurRadius: 35,
+                      spreadRadius: 4,
+                    ),
+                  ],
+                  gradient: RadialGradient(
+                    colors: [
+                      AppColors.accentTeal.withOpacity(0.15),
+                      Colors.transparent,
+                    ],
                     radius: 0.8,
                   ),
                 ),
                 child: const Icon(
                   Icons.auto_awesome,
-                  size: 80,
+                  size: 76,
                   color: AppColors.accentTeal,
                 ),
               ),
-              const SizedBox(height: ScreenUtils.margin),
+              const SizedBox(height: 40),
               const Text(
                 "A U R A",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: ScreenUtils.fontTextTitle,
+                  fontSize: 32,
                   fontWeight: FontWeight.w900,
-                  letterSpacing: 8,
+                  letterSpacing: 10,
                 ),
               ),
-              const SizedBox(height: ScreenUtils.spacingStandardControl),
+              const SizedBox(height: 10),
               const Text(
                 "AI EXPENSE TRACKER",
                 style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: ScreenUtils.fontTextSmaller,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 3,
+                  letterSpacing: 4,
                 ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 64),
               AnimatedBuilder(
                 animation: Listenable.merge([_statusText, _errorText]),
                 builder: (context, _) {
@@ -114,25 +124,31 @@ class _SplashScreenState extends State<SplashScreen> {
                   final statusText = _statusText.value;
 
                   if (errorText == null) {
-                    return Column(
-                      children: [
-                        const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                    return SizedBox(
+                      width: 220,
+                      child: Column(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: const SizedBox(
+                              height: 3,
+                              child: LinearProgressIndicator(
+                                backgroundColor: AppColors.border,
+                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentTeal),
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: ScreenUtils.spacingStander),
-                        Text(
-                          statusText,
-                          style: const TextStyle(
-                            color: AppColors.textSecondary,
-                            fontSize: ScreenUtils.fontTextSmall,
+                          const SizedBox(height: 16),
+                          Text(
+                            statusText,
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   } else {
                     return Padding(
@@ -158,7 +174,6 @@ class _SplashScreenState extends State<SplashScreen> {
                           const SizedBox(height: 8),
                           TextButton(
                             onPressed: () {
-                              // Continue with error flagged (local DB offline or mockup only)
                               context.go('/home');
                             },
                             child: const Text(
