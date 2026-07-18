@@ -25,7 +25,7 @@ on:
 # Environment-wide defaults
 # ---------------------------------------------------------------------------
 env:
-  FLUTTER_VERSION: "3.32.4"
+  FLUTTER_VERSION: "3.41.2"
   JAVA_VERSION: "17"
   BUILD_NUMBER: ${{ github.run_number }}
 
