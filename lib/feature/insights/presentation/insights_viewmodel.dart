@@ -96,6 +96,7 @@ class InsightsViewModel extends AutoDisposeNotifier<InsightsState> {
         id: 100,
         title: "Insights Report Saved!",
         body: "File saved: ${file.path.split('/').last}",
+        payload: file.path,
       );
       return file.path;
     } catch (e) {

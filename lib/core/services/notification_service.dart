@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:open_file_plus/open_file_plus.dart';
 
 class NotificationService {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
@@ -24,9 +26,32 @@ class NotificationService {
     await _notificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (NotificationResponse response) async {
-        // Handle click event if needed
+        final String? filePath = response.payload;
+        if (filePath != null && filePath.isNotEmpty) {
+          try {
+            await OpenFile.open(filePath);
+          } catch (e) {
+            debugPrint("Error opening file: $e");
+          }
+        }
       },
     );
+
+    // Handle click if app was opened from terminated state via notification
+    final NotificationAppLaunchDetails? launchDetails =
+        await _notificationsPlugin.getNotificationAppLaunchDetails();
+    if (launchDetails != null && launchDetails.didNotificationLaunchApp) {
+      final String? filePath = launchDetails.notificationResponse?.payload;
+      if (filePath != null && filePath.isNotEmpty) {
+        Future.delayed(const Duration(milliseconds: 600), () async {
+          try {
+            await OpenFile.open(filePath);
+          } catch (e) {
+            debugPrint("Error opening launch file: $e");
+          }
+        });
+      }
+    }
 
     // Request permissions for Android 13+
     await _notificationsPlugin

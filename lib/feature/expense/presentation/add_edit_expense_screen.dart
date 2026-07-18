@@ -16,31 +16,39 @@ class AddEditExpenseScreen extends ConsumerStatefulWidget {
   const AddEditExpenseScreen({super.key, this.expense});
 
   @override
-  ConsumerState<AddEditExpenseScreen> createState() => _AddEditExpenseScreenState();
+  ConsumerState<AddEditExpenseScreen> createState() =>
+      _AddEditExpenseScreenState();
 }
 
 class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late final TextEditingController _titleController;
   late final TextEditingController _amountController;
   late final TextEditingController _descController;
-  
-  final ValueNotifier<DateTime> _selectedDate = ValueNotifier<DateTime>(DateTime.now());
-  final ValueNotifier<ExpenseCategory> _selectedCategory = ValueNotifier<ExpenseCategory>(ExpenseCategory.food);
+
+  final ValueNotifier<DateTime> _selectedDate = ValueNotifier<DateTime>(
+    DateTime.now(),
+  );
+  final ValueNotifier<ExpenseCategory> _selectedCategory =
+      ValueNotifier<ExpenseCategory>(ExpenseCategory.food);
   bool _isEditing = false;
 
   @override
   void initState() {
     super.initState();
     _isEditing = widget.expense != null && widget.expense!.id.isNotEmpty;
-    
+
     _titleController = TextEditingController(text: widget.expense?.title ?? "");
     _amountController = TextEditingController(
-      text: widget.expense != null ? widget.expense!.amount.toStringAsFixed(2) : "",
+      text: widget.expense != null
+          ? widget.expense!.amount.toStringAsFixed(2)
+          : "",
     );
-    _descController = TextEditingController(text: widget.expense?.description ?? "");
-    
+    _descController = TextEditingController(
+      text: widget.expense?.description ?? "",
+    );
+
     if (widget.expense != null) {
       _selectedDate.value = widget.expense!.date;
       _selectedCategory.value = widget.expense!.category;
@@ -127,9 +135,7 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(titleText),
-      ),
+      appBar: AppBar(title: Text(titleText)),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -142,12 +148,19 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
           child: Form(
             key: _formKey,
             child: ListView(
-              padding: EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
+              padding: EdgeInsets.symmetric(
+                horizontal: ScreenUtils.margin,
+                vertical: ScreenUtils.margin,
+              ),
               children: [
-                if (widget.expense != null && widget.expense!.isScanFallback) ...[
+                if (widget.expense != null &&
+                    widget.expense!.isScanFallback) ...[
                   Container(
                     margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 14,
+                    ),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
@@ -157,7 +170,9 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
-                      borderRadius: BorderRadius.circular(ScreenUtils.kBorderRadius),
+                      borderRadius: BorderRadius.circular(
+                        ScreenUtils.kBorderRadius,
+                      ),
                       border: Border.all(
                         color: Colors.orangeAccent.withOpacity(0.35),
                         width: 1.2,
@@ -250,7 +265,9 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                           fontSize: 40,
                           fontWeight: FontWeight.bold,
                         ),
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         textAlign: TextAlign.center,
                         decoration: const InputDecoration(
                           hintText: "0.00",
@@ -287,7 +304,11 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                         controller: _titleController,
                         style: const TextStyle(color: Colors.white),
                         decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.storefront, color: AppColors.accentTeal, size: 20),
+                          prefixIcon: Icon(
+                            Icons.storefront,
+                            color: AppColors.accentTeal,
+                            size: 20,
+                          ),
                           labelText: "Merchant / Title",
                           hintText: "Where did you spend?",
                         ),
@@ -299,50 +320,102 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                         },
                       ),
                       SizedBox(height: ScreenUtils.spacingStander),
-                      // Date Picker Box
-                      InkWell(
-                        onTap: _pickDate,
-                        borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: ScreenUtils.margin, vertical: ScreenUtils.margin),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface.withOpacity(0.5),
-                            borderRadius: BorderRadius.circular(ScreenUtils.cardCircularRadius),
-                            border: Border.all(color: AppColors.border),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  const Icon(Icons.calendar_today, size: 18, color: AppColors.accentTeal),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    "Date",
-                                    style: TextStyle(color: AppColors.textSecondary, fontSize: ScreenUtils.fontTextSmall),
-                                  ),
-                                ],
+                      // Date Selector Header
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0, top: 4.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Date of Expense",
+                              style: TextStyle(
+                                color: Colors.white.withOpacity(0.85),
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.bold,
                               ),
-                              Row(
-                                children: [
-                                  ValueListenableBuilder<DateTime>(
-                                    valueListenable: _selectedDate,
-                                    builder: (context, selectedDate, _) {
-                                      return Text(
-                                        DateFormat('MMM dd, yyyy').format(selectedDate),
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: ScreenUtils.fontTextSmall,
-                                        ),
-                                      );
-                                    },
+                            ),
+                            ValueListenableBuilder<DateTime>(
+                              valueListenable: _selectedDate,
+                              builder: (context, selectedDate, _) {
+                                return Text(
+                                  DateFormat(
+                                    'MMM dd, yyyy',
+                                  ).format(selectedDate),
+                                  style: const TextStyle(
+                                    color: AppColors.accentTeal,
+                                    fontSize: 12.5,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Quick Date Selector Presets
+                      ValueListenableBuilder<DateTime>(
+                        valueListenable: _selectedDate,
+                        builder: (context, selectedDate, _) {
+                          final today = DateTime.now();
+                          final yesterday = today.subtract(
+                            const Duration(days: 1),
+                          );
+
+                          final isToday = DateUtils.isSameDay(
+                            selectedDate,
+                            today,
+                          );
+                          final isYesterday = DateUtils.isSameDay(
+                            selectedDate,
+                            yesterday,
+                          );
+                          final isCustom = !isToday && !isYesterday;
+
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: _buildDateQuickChip(
+                                  label: "Today",
+                                  isSelected: isToday,
+                                  onTap: () {
+                                    _selectedDate.value = DateTime(
+                                      today.year,
+                                      today.month,
+                                      today.day,
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: _buildDateQuickChip(
+                                  label: "Yesterday",
+                                  isSelected: isYesterday,
+                                  onTap: () {
+                                    _selectedDate.value = DateTime(
+                                      yesterday.year,
+                                      yesterday.month,
+                                      yesterday.day,
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: _buildDateQuickChip(
+                                  label: isCustom
+                                      ? DateFormat(
+                                          'MMM dd',
+                                        ).format(selectedDate)
+                                      : "Choose...",
+                                  isSelected: isCustom,
+                                  icon: Icons.calendar_month_rounded,
+                                  onTap: _pickDate,
+                                ),
                               ),
                             ],
-                          ),
-                        ),
+                          );
+                        },
                       ),
                       SizedBox(height: ScreenUtils.spacingStander),
                       // Description input
@@ -351,7 +424,11 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                         style: const TextStyle(color: Colors.white),
                         maxLines: 2,
                         decoration: const InputDecoration(
-                          prefixIcon: Icon(Icons.description_outlined, color: AppColors.accentTeal, size: 20),
+                          prefixIcon: Icon(
+                            Icons.description_outlined,
+                            color: AppColors.accentTeal,
+                            size: 20,
+                          ),
                           labelText: "Note (Optional)",
                           hintText: "Add items or comments...",
                         ),
@@ -361,42 +438,238 @@ class _AddEditExpenseScreenState extends ConsumerState<AddEditExpenseScreen> {
                 ),
                 SizedBox(height: ScreenUtils.spacingStander),
                 // Category header
-                Text(
+                const Text(
                   "Select Category",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: ScreenUtils.fontTextSmall,
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: ScreenUtils.spacingControl),
-                // Category grid/wrap selection
+                const SizedBox(height: 12),
+                // Category grid selection
                 ValueListenableBuilder<ExpenseCategory>(
                   valueListenable: _selectedCategory,
                   builder: (context, selectedCategory, _) {
-                    return Wrap(
-                      spacing: ScreenUtils.fieldSpace,
-                      runSpacing: ScreenUtils.fieldSpace,
-                      children: ExpenseCategory.values.map((cat) {
-                        return CategoryChip(
+                    return GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: 1.05,
+                          ),
+                      itemCount: ExpenseCategory.values.length,
+                      itemBuilder: (context, index) {
+                        final cat = ExpenseCategory.values[index];
+                        return _buildCategoryGridCard(
                           category: cat,
                           isSelected: selectedCategory == cat,
                           onTap: () {
                             _selectedCategory.value = cat;
                           },
                         );
-                      }).toList(),
+                      },
                     );
                   },
                 ),
-                const SizedBox(height: 48),
-                // Save Button
-                ElevatedButton(
-                  onPressed: _saveForm,
-                  child: Text(_isEditing ? "UPDATE TRANSACTION" : "SAVE TRANSACTION"),
+                const SizedBox(height: 36),
+                // Premium Linear Gradient Save Button
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [AppColors.accentTeal, AppColors.accentPurple],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.accentTeal.withOpacity(0.25),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _saveForm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                    ),
+                    child: Text(
+                      _isEditing ? "UPDATE TRANSACTION" : "SAVE TRANSACTION",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDateQuickChip({
+    required String label,
+    required bool isSelected,
+    IconData? icon,
+    required VoidCallback onTap,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      decoration: BoxDecoration(
+        color: isSelected
+            ? AppColors.accentTeal.withOpacity(0.12)
+            : AppColors.surface.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isSelected
+              ? AppColors.accentTeal
+              : AppColors.border.withOpacity(0.5),
+          width: 1.2,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(
+                    icon,
+                    size: 12,
+                    color: isSelected
+                        ? AppColors.accentTeal
+                        : AppColors.textSecondary,
+                  ),
+                  const SizedBox(width: 4),
+                ],
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    fontSize: 11.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCategoryGridCard({
+    required ExpenseCategory category,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final name = AppConstants.getCategoryName(category);
+    final icon = AppConstants.getCategoryIcon(category);
+    final color = AppConstants.getCategoryColor(category);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: isSelected
+            ? color.withOpacity(0.12)
+            : AppColors.surface.withOpacity(0.4),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: isSelected ? color : AppColors.border.withOpacity(0.5),
+          width: 1.5,
+        ),
+        boxShadow: isSelected
+            ? [
+                BoxShadow(
+                  color: color.withOpacity(0.18),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ]
+            : [],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          onTap: onTap,
+          child: Stack(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 14,
+                  horizontal: 8,
+                ),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? color.withOpacity(0.2)
+                              : AppColors.background,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: isSelected
+                                ? color.withOpacity(0.4)
+                                : AppColors.border.withOpacity(0.5),
+                            width: 1,
+                          ),
+                        ),
+                        child: Icon(
+                          icon,
+                          color: isSelected ? color : AppColors.textSecondary,
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        name,
+                        style: TextStyle(
+                          color: isSelected
+                              ? Colors.white
+                              : AppColors.textSecondary,
+                          fontWeight: isSelected
+                              ? FontWeight.bold
+                              : FontWeight.w500,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (isSelected)
+                Positioned(
+                  top: 6,
+                  right: 6,
+                  child: Icon(
+                    Icons.check_circle_rounded,
+                    color: color,
+                    size: 14,
+                  ),
+                ),
+            ],
           ),
         ),
       ),
