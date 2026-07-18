@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/services/gemini_service.dart';
@@ -63,28 +64,42 @@ class ScannerViewModel extends AutoDisposeNotifier<ScannerState> {
         imageBytes: bytes,
       );
     } catch (e) {
-      state = state.copyWith(status: ScanStatus.error, errorMessage: 'Failed to select image: ${e.toString()}');
+      state = state.copyWith(
+        status: ScanStatus.error,
+        errorMessage: 'Failed to select image: ${e.toString()}',
+      );
     }
   }
 
   Future<void> scanReceipt() async {
     final bytes = state.imageBytes;
     if (bytes == null) {
-      state = state.copyWith(status: ScanStatus.error, errorMessage: 'No image selected.');
+      state = state.copyWith(
+        status: ScanStatus.error,
+        errorMessage: 'No image selected.',
+      );
       return;
     }
 
     state = state.copyWith(status: ScanStatus.scanning);
     try {
-      final mimeType = state.imagePath?.endsWith('.png') == true ? 'image/png' : 'image/jpeg';
+      final mimeType = state.imagePath?.endsWith('.png') == true
+          ? 'image/png'
+          : 'image/jpeg';
       final result = await _geminiService.scanReceipt(bytes, mimeType);
       state = state.copyWith(status: ScanStatus.success, extractedData: result);
     } catch (e) {
-      print('Error scanning receipt: $e'); // Added log for debugging
+      debugPrint('Error scanning receipt: $e');
       final errStr = e.toString();
-      final bool isRateLimit = errStr.contains('429') || errStr.contains('RESOURCE_EXHAUSTED') || errStr.contains('Quota exceeded');
-      final bool isInvalidKey = errStr.contains('403') || errStr.contains('API_KEY_INVALID') || errStr.contains('API key');
-      
+      final bool isRateLimit =
+          errStr.contains('429') ||
+          errStr.contains('RESOURCE_EXHAUSTED') ||
+          errStr.contains('Quota exceeded');
+      final bool isInvalidKey =
+          errStr.contains('403') ||
+          errStr.contains('API_KEY_INVALID') ||
+          errStr.contains('API key');
+
       // Graceful fallback to guarantee scanner works anyway
       final fallbackData = {
         'merchant': 'Scanned Vendor',
@@ -96,7 +111,10 @@ class ScannerViewModel extends AutoDisposeNotifier<ScannerState> {
         'isRateLimit': isRateLimit,
         'isInvalidKey': isInvalidKey,
       };
-      state = state.copyWith(status: ScanStatus.success, extractedData: fallbackData);
+      state = state.copyWith(
+        status: ScanStatus.success,
+        extractedData: fallbackData,
+      );
     }
   }
 
@@ -105,4 +123,7 @@ class ScannerViewModel extends AutoDisposeNotifier<ScannerState> {
   }
 }
 
-final scannerProvider = AutoDisposeNotifierProvider<ScannerViewModel, ScannerState>(ScannerViewModel.new);
+final scannerProvider =
+    AutoDisposeNotifierProvider<ScannerViewModel, ScannerState>(
+      ScannerViewModel.new,
+    );
