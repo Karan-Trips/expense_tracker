@@ -14,7 +14,7 @@ class AuraExpenseApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return MaterialApp.router(
-          title: 'AuraExpense',
+          title: 'Aura Ledger',
           debugShowCheckedModeBanner: false,
           theme: AppTheme.darkTheme,
           routerConfig: goRouter,

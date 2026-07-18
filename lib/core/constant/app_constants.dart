@@ -10,7 +10,7 @@ enum ExpenseCategory {
 }
 
 class AppConstants {
-  static const String appName = "AuraExpense";
+  static const String appName = "Aura Ledger";
   
   static String getCategoryName(ExpenseCategory category) {
     switch (category) {

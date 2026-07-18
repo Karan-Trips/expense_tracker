@@ -14,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  final ValueNotifier<String> _statusText = ValueNotifier("Starting AuraExpense...");
+  final ValueNotifier<String> _statusText = ValueNotifier("Starting Aura Ledger...");
   final ValueNotifier<String?> _errorText = ValueNotifier(null);
 
   @override

@@ -1,0 +1,206 @@
+# =============================================================================
+# AuraExpense - Flutter CI/CD Pipeline (Debug Build for QA Testing)
+# =============================================================================
+# Builds a debug-signed APK on every push and uploads it as a downloadable
+# GitHub Artifact + overwrites a single "Latest Build" GitHub Release.
+#
+# NO secrets required — uses Flutter's default debug signing and the
+# built-in GITHUB_TOKEN.
+#
+# Share the Release link with QA: Releases → Latest Build → Download APK
+# =============================================================================
+
+name: Flutter CI/CD
+
+# ---------------------------------------------------------------------------
+# Triggers
+# ---------------------------------------------------------------------------
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+# ---------------------------------------------------------------------------
+# Environment-wide defaults
+# ---------------------------------------------------------------------------
+env:
+  FLUTTER_VERSION: "3.32.4"
+  JAVA_VERSION: "17"
+  BUILD_NUMBER: ${{ github.run_number }}
+
+# ---------------------------------------------------------------------------
+# Permissions — needed to create/update GitHub Releases
+# ---------------------------------------------------------------------------
+permissions:
+  contents: write
+
+# ---------------------------------------------------------------------------
+# Jobs
+# ---------------------------------------------------------------------------
+jobs:
+  build:
+    name: "Build & Release"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # -----------------------------------------------------------------------
+      # 1. Checkout repository
+      # -----------------------------------------------------------------------
+      - name: "📥 Checkout repository"
+        uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------------
+      # 2. Set up Java 17 (required by Gradle / Android SDK)
+      # -----------------------------------------------------------------------
+      - name: "☕ Set up Java ${{ env.JAVA_VERSION }}"
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: ${{ env.JAVA_VERSION }}
+
+      # -----------------------------------------------------------------------
+      # 3. Set up Flutter SDK with built-in caching
+      # -----------------------------------------------------------------------
+      - name: "🐦 Set up Flutter ${{ env.FLUTTER_VERSION }}"
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: "stable"
+          cache: true
+
+      # -----------------------------------------------------------------------
+      # 4. Cache Pub packages
+      # -----------------------------------------------------------------------
+      - name: "📦 Cache Pub packages"
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+          key: pub-cache-${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
+          restore-keys: |
+            pub-cache-${{ runner.os }}-
+
+      # -----------------------------------------------------------------------
+      # 5. Cache Gradle wrapper and dependencies
+      # -----------------------------------------------------------------------
+      - name: "🏗️ Cache Gradle"
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      # -----------------------------------------------------------------------
+      # 6. Install Flutter dependencies
+      # -----------------------------------------------------------------------
+      - name: "📦 Install dependencies (flutter pub get)"
+        run: flutter pub get
+
+      # -----------------------------------------------------------------------
+      # 7. Static analysis — fail fast on lint issues
+      # -----------------------------------------------------------------------
+      - name: "🔍 Run flutter analyze"
+        run: flutter analyze --no-fatal-infos
+
+      # -----------------------------------------------------------------------
+      # 8. Run unit tests — fail fast on test failures
+      # -----------------------------------------------------------------------
+      - name: "🧪 Run flutter test"
+        run: flutter test
+
+      # -----------------------------------------------------------------------
+      # 9. Build Release APK (uses default debug signing — no keystore needed)
+      # -----------------------------------------------------------------------
+      - name: "🏗️ Build Release APK"
+        if: github.event_name == 'push'
+        run: |
+          flutter build apk --release \
+            --build-number=${{ env.BUILD_NUMBER }} \
+            --build-name=1.0.${{ env.BUILD_NUMBER }}
+
+      # -----------------------------------------------------------------------
+      # 10. Build Release AAB (main branch only)
+      # -----------------------------------------------------------------------
+      - name: "📦 Build Release AAB"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          flutter build appbundle --release \
+            --build-number=${{ env.BUILD_NUMBER }} \
+            --build-name=1.0.${{ env.BUILD_NUMBER }}
+
+      # -----------------------------------------------------------------------
+      # 11. Upload APK as GitHub Artifact (downloadable from Actions tab)
+      # -----------------------------------------------------------------------
+      - name: "⬆️ Upload APK Artifact"
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 30
+
+      # -----------------------------------------------------------------------
+      # 12. Upload AAB as GitHub Artifact (main branch only)
+      # -----------------------------------------------------------------------
+      - name: "⬆️ Upload AAB Artifact"
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 30
+
+      # -----------------------------------------------------------------------
+      # 13. Prepare release notes with version info
+      # -----------------------------------------------------------------------
+      - name: "📝 Prepare release notes"
+        if: github.event_name == 'push'
+        id: release_notes
+        run: |
+          BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+          COMMIT_SHA="${GITHUB_SHA}"
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          BUILD_DATE=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+
+          {
+            echo "body<<EOF"
+            echo "## 🚀 Latest Build — AuraExpense"
+            echo ""
+            echo "📥 **Download the APK below** and install on any Android device for testing."
+            echo ""
+            echo "| Info | Value |"
+            echo "|------|-------|"
+            echo "| **Version** | \`1.0.${{ env.BUILD_NUMBER }}\` |"
+            echo "| **Build Number** | \`${{ env.BUILD_NUMBER }}\` |"
+            echo "| **Branch** | \`${BRANCH_NAME}\` |"
+            echo "| **Commit SHA** | \`${COMMIT_SHA}\` |"
+            echo "| **Commit Message** | ${COMMIT_MSG} |"
+            echo "| **Build Date** | ${BUILD_DATE} |"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+        shell: bash
+
+      # -----------------------------------------------------------------------
+      # 14. Create or overwrite the single "Latest Build" GitHub Release
+      #     Uses built-in GITHUB_TOKEN — no PAT or secret needed
+      # -----------------------------------------------------------------------
+      - name: "🏷️ Publish Latest Build Release"
+        if: github.event_name == 'push'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: latest
+          name: "Latest Build"
+          body: ${{ steps.release_notes.outputs.body }}
+          allowUpdates: true
+          removeArtifacts: true
+          makeLatest: true
+          artifacts: |
+            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/bundle/release/app-release.aab
+          artifactErrorsFailBuild: false
+          token: ${{ secrets.GITHUB_TOKEN }}

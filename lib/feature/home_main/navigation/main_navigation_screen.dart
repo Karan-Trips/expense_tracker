@@ -57,7 +57,7 @@ class MainNavigationScreen extends StatelessWidget {
               ),
               SizedBox(width: 10),
               Text(
-                "Exit AuraExpense?",
+                "Exit Aura Ledger?",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w900,
