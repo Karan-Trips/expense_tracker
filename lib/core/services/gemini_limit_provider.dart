@@ -29,18 +29,27 @@ class GeminiLimitState {
   }
 }
 
-class GeminiLimitNotifier extends StateNotifier<GeminiLimitState> {
+class GeminiLimitNotifier extends Notifier<GeminiLimitState> {
   Timer? _cleanupTimer;
 
-  GeminiLimitNotifier()
-      : super(GeminiLimitState(
-          maxRequests: 15,
-          remainingRequests: 15,
-          requestTimestamps: [],
-          nextResetSeconds: 0,
-        )) {
+  @override
+  GeminiLimitState build() {
     // Periodically prune expired requests every second to keep the UI in sync
-    _cleanupTimer = Timer.periodic(const Duration(seconds: 1), (_) => _cleanupOldRequests());
+    _cleanupTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (_) => _cleanupOldRequests(),
+    );
+
+    ref.onDispose(() {
+      _cleanupTimer?.cancel();
+    });
+
+    return GeminiLimitState(
+      maxRequests: 15,
+      remainingRequests: 15,
+      requestTimestamps: [],
+      nextResetSeconds: 0,
+    );
   }
 
   void _cleanupOldRequests() {
@@ -48,7 +57,9 @@ class GeminiLimitNotifier extends StateNotifier<GeminiLimitState> {
     final oneMinuteAgo = now.subtract(const Duration(minutes: 1));
 
     // Remove requests that occurred more than 60 seconds ago
-    final updatedTimestamps = state.requestTimestamps.where((time) => time.isAfter(oneMinuteAgo)).toList();
+    final updatedTimestamps = state.requestTimestamps
+        .where((time) => time.isAfter(oneMinuteAgo))
+        .toList();
 
     int nextReset = 0;
     if (updatedTimestamps.isNotEmpty) {
@@ -72,7 +83,7 @@ class GeminiLimitNotifier extends StateNotifier<GeminiLimitState> {
     // Add new timestamp and prune expired ones
     final updatedTimestamps = [
       ...state.requestTimestamps.where((time) => time.isAfter(oneMinuteAgo)),
-      now
+      now,
     ];
 
     int nextReset = 0;
@@ -89,14 +100,9 @@ class GeminiLimitNotifier extends StateNotifier<GeminiLimitState> {
       nextResetSeconds: nextReset,
     );
   }
-
-  @override
-  void dispose() {
-    _cleanupTimer?.cancel();
-    super.dispose();
-  }
 }
 
-final geminiLimitProvider = StateNotifierProvider<GeminiLimitNotifier, GeminiLimitState>((ref) {
-  return GeminiLimitNotifier();
-});
+final geminiLimitProvider =
+    NotifierProvider<GeminiLimitNotifier, GeminiLimitState>(
+      GeminiLimitNotifier.new,
+    );
