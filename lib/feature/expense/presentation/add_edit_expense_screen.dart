@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/constant/app_colors.dart';
 import '../../../core/constant/app_constants.dart';
-import '../../../widgets/category_chip.dart';
 import '../../../widgets/frosted_card.dart';
 import '../domain/expense.dart';
 import 'expense_viewmodel.dart';
