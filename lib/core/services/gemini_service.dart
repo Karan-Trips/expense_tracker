@@ -6,18 +6,31 @@ import 'package:google_generative_ai/google_generative_ai.dart';
 import '../error/failures.dart';
 
 class GeminiService {
-  late final GenerativeModel _visionModel;
-  late final GenerativeModel _textModel;
+  late GenerativeModel _visionModel;
+  late GenerativeModel _textModel;
+  String? _currentApiKey;
   bool _isInitialized = false;
 
   void init() {
     try {
-      final apiKey = dotenv.env['GEMINI_API_KEY'];
-      if (apiKey == null || apiKey.isEmpty) {
+      final rawApiKey = dotenv.env['GEMINI_API_KEY'];
+      final apiKey = rawApiKey?.trim() ?? '';
+      if (apiKey.isEmpty) {
         throw const UnknownFailure(
           'Gemini API Key is missing in the .env file. Please define GEMINI_API_KEY.',
         );
       }
+
+      // If already initialized with this exact key, do nothing
+      if (_isInitialized && _currentApiKey == apiKey) {
+        return;
+      }
+
+      final maskedKey = apiKey.length > 10
+          ? '${apiKey.substring(0, 6)}...${apiKey.substring(apiKey.length - 4)}'
+          : '...';
+      // ignore: avoid_print
+      print('Initializing Gemini Service with API Key: $maskedKey');
 
       _visionModel = GenerativeModel(
         model: 'gemini-1.5-flash',
@@ -65,6 +78,7 @@ class GeminiService {
         ),
       );
 
+      _currentApiKey = apiKey;
       _isInitialized = true;
     } catch (e) {
       if (e is Failure) rethrow;
@@ -78,7 +92,7 @@ class GeminiService {
     Uint8List imageBytes,
     String mimeType,
   ) async {
-    if (!_isInitialized) init();
+    init();
 
     const prompt = '''
     You are an elite, high-precision OCR transaction scanner. Your goal is to analyze the receipt image and extract the key details with 100% accuracy.
@@ -159,7 +173,7 @@ class GeminiService {
   }
 
   Future<String> generateSpendingInsights(String expensesJson) async {
-    if (!_isInitialized) init();
+    init();
 
     final prompt =
         '''
