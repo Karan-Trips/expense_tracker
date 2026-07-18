@@ -58,15 +58,30 @@ class ReceiptScannerScreen extends ConsumerWidget {
 
     // Show warning snackbar if fallback data was generated
     if (data['isFallback'] == true) {
+      final bool isRateLimit = data['isRateLimit'] == true;
+      final bool isInvalidKey = data['isInvalidKey'] == true;
+
+      String message = "Offline fallback activated. Pre-filled basic details for you!";
+      if (isRateLimit) {
+        message = "Gemini Free Limit Reached! Try changing/updating your API key in .env or wait a minute.";
+      } else if (isInvalidKey) {
+        message = "Invalid Gemini API Key! Please verify or replace the key in your .env file.";
+      }
+
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              "Offline/Free Tier limit reached. We pre-filled draft details from the image for you!",
+              message,
               style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12),
             ),
-            backgroundColor: AppColors.accentPurple,
-            duration: const Duration(seconds: 4),
+            backgroundColor: (isRateLimit || isInvalidKey) ? Colors.orangeAccent : AppColors.accentPurple,
+            duration: const Duration(seconds: 5),
+            action: SnackBarAction(
+              label: "OK",
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
           ),
         );
       });

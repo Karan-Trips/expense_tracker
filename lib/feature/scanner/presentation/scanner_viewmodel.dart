@@ -80,6 +80,10 @@ class ScannerViewModel extends AutoDisposeNotifier<ScannerState> {
       final result = await _geminiService.scanReceipt(bytes, mimeType);
       state = state.copyWith(status: ScanStatus.success, extractedData: result);
     } catch (e) {
+      final errStr = e.toString();
+      final bool isRateLimit = errStr.contains('429') || errStr.contains('RESOURCE_EXHAUSTED') || errStr.contains('Quota exceeded');
+      final bool isInvalidKey = errStr.contains('403') || errStr.contains('API_KEY_INVALID') || errStr.contains('API key');
+      
       // Graceful fallback to guarantee scanner works anyway
       final fallbackData = {
         'merchant': 'Scanned Vendor',
@@ -88,6 +92,8 @@ class ScannerViewModel extends AutoDisposeNotifier<ScannerState> {
         'category': 'others',
         'description': 'AI offline/limit fallback. Please update manually.',
         'isFallback': true,
+        'isRateLimit': isRateLimit,
+        'isInvalidKey': isInvalidKey,
       };
       state = state.copyWith(status: ScanStatus.success, extractedData: fallbackData);
     }

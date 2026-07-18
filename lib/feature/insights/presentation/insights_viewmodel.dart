@@ -64,7 +64,16 @@ class InsightsViewModel extends AutoDisposeNotifier<InsightsState> {
       final report = await _geminiService.generateSpendingInsights(jsonStr);
       state = state.copyWith(status: InsightsStatus.success, reportMarkdown: report);
     } catch (e) {
-      state = state.copyWith(status: InsightsStatus.error, errorMessage: e.toString());
+      final errStr = e.toString();
+      String userFriendlyError = errStr;
+      
+      if (errStr.contains('429') || errStr.contains('RESOURCE_EXHAUSTED') || errStr.contains('Quota exceeded')) {
+        userFriendlyError = "Gemini Free Tier limit (15 requests per minute) has been reached! Please wait a minute, or update/change the GEMINI_API_KEY in your .env file to continue.";
+      } else if (errStr.contains('403') || errStr.contains('API_KEY_INVALID') || errStr.contains('API key')) {
+        userFriendlyError = "Invalid Gemini API Key! Please verify or replace the GEMINI_API_KEY inside your .env file at the project root.";
+      }
+      
+      state = state.copyWith(status: InsightsStatus.error, errorMessage: userFriendlyError);
     }
   }
 }
