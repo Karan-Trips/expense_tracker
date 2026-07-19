@@ -6,6 +6,7 @@ import '../services/gemini_service.dart';
 final locator = GetIt.instance;
 
 Future<void> setupLocator() async {
+  if (locator.isRegistered<GeminiService>()) return;
   // Register Services
   locator.registerSingleton<GeminiService>(GeminiService());
 
