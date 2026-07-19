@@ -156,17 +156,7 @@ jobs:
             --build-name=1.0.${{ env.BUILD_NUMBER }}
 
       # -----------------------------------------------------------------------
-      # 12. Build Release AAB (main branch only)
-      # -----------------------------------------------------------------------
-      - name: "📦 Build Release AAB"
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        run: |
-          flutter build appbundle --release \
-            --build-number=${{ env.BUILD_NUMBER }} \
-            --build-name=1.0.${{ env.BUILD_NUMBER }}
-
-      # -----------------------------------------------------------------------
-      # 13. Upload APK as GitHub Artifact (downloadable from Actions tab)
+      # 12. Upload APK as GitHub Artifact (downloadable from Actions tab)
       # -----------------------------------------------------------------------
       - name: "⬆️ Upload APK Artifact"
         if: github.event_name == 'push'
@@ -177,18 +167,7 @@ jobs:
           retention-days: 30
 
       # -----------------------------------------------------------------------
-      # 14. Upload AAB as GitHub Artifact (main branch only)
-      # -----------------------------------------------------------------------
-      - name: "⬆️ Upload AAB Artifact"
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-release-aab
-          path: build/app/outputs/bundle/release/app-release.aab
-          retention-days: 30
-
-      # -----------------------------------------------------------------------
-      # 15. Prepare release notes with version info
+      # 13. Prepare release notes with version info
       # -----------------------------------------------------------------------
       - name: "📝 Prepare release notes"
         if: github.event_name == 'push'
@@ -218,7 +197,7 @@ jobs:
         shell: bash
 
       # -----------------------------------------------------------------------
-      # 16. Create or overwrite the single "Latest Build" GitHub Release
+      # 14. Create or overwrite the single "Latest Build" GitHub Release
       #     Uses built-in GITHUB_TOKEN — no PAT or secret needed
       # -----------------------------------------------------------------------
       - name: "🏷️ Publish Latest Build Release"
@@ -233,6 +212,5 @@ jobs:
           makeLatest: true
           artifacts: |
             build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
           artifactErrorsFailBuild: false
           token: ${{ secrets.GITHUB_TOKEN }}
