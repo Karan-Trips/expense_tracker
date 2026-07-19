@@ -140,7 +140,7 @@ jobs:
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       # -----------------------------------------------------------------------
-      # 10. Run unit tests
+      # 10. Run unit testsss
       # -----------------------------------------------------------------------
       - name: "🧪 Run flutter test"
         run: flutter test
