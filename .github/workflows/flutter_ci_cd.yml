@@ -105,12 +105,23 @@ jobs:
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
 
       # -----------------------------------------------------------------------
-      # 7. Verify .env exists
+      # 7. Verify .env exists and is populated
       # -----------------------------------------------------------------------
       - name: Verify .env
         run: |
           ls -la
-          test -f .env && echo ".env created successfully"
+          if [ -f .env ]; then
+            echo ".env file exists."
+            KEY_VAL=$(grep GEMINI_API_KEY .env | cut -d'=' -f2)
+            if [ -z "$KEY_VAL" ]; then
+              echo "::warning::GEMINI_API_KEY is empty! Make sure you set GEMINI_API_KEY in GitHub Secrets."
+            else
+              echo "GEMINI_API_KEY is populated successfully."
+            fi
+          else
+            echo "::error::.env file was not created!"
+            exit 1
+          fi
 
       # -----------------------------------------------------------------------
       # 8. Install dependencies
