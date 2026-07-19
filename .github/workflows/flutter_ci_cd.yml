@@ -98,17 +98,29 @@ jobs:
             gradle-${{ runner.os }}-
 
       # -----------------------------------------------------------------------
-      # 6. Create .env placeholder and install dependencies
-      #    .env is gitignored but listed as a Flutter asset — create an empty
-      #    one so the analyzer and build don't fail.
+      # 6. Create .env from GitHub Repository Secrets
+      # -----------------------------------------------------------------------
+      - name: Create .env
+        run: |
+          echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
+
+      # -----------------------------------------------------------------------
+      # 7. Verify .env exists
+      # -----------------------------------------------------------------------
+      - name: Verify .env
+        run: |
+          ls -la
+          test -f .env && echo ".env created successfully"
+
+      # -----------------------------------------------------------------------
+      # 8. Install dependencies
       # -----------------------------------------------------------------------
       - name: "📦 Install dependencies"
         run: |
-          touch .env
           flutter pub get
 
       # -----------------------------------------------------------------------
-      # 7. Static analysis
+      # 9. Static analysis
       #    --no-fatal-infos:    treat info-level issues as non-fatal
       #    --no-fatal-warnings: treat warning-level issues as non-fatal
       #    This prevents CI from failing on non-critical lint warnings.
@@ -117,13 +129,13 @@ jobs:
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
 
       # -----------------------------------------------------------------------
-      # 8. Run unit tests
+      # 10. Run unit tests
       # -----------------------------------------------------------------------
       - name: "🧪 Run flutter test"
         run: flutter test
 
       # -----------------------------------------------------------------------
-      # 9. Build Release APK (all branches, debug-signed)
+      # 11. Build Release APK (all branches, debug-signed)
       # -----------------------------------------------------------------------
       - name: "🏗️ Build Release APK"
         if: github.event_name == 'push'
@@ -133,7 +145,7 @@ jobs:
             --build-name=1.0.${{ env.BUILD_NUMBER }}
 
       # -----------------------------------------------------------------------
-      # 10. Build Release AAB (main branch only)
+      # 12. Build Release AAB (main branch only)
       # -----------------------------------------------------------------------
       - name: "📦 Build Release AAB"
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -143,7 +155,7 @@ jobs:
             --build-name=1.0.${{ env.BUILD_NUMBER }}
 
       # -----------------------------------------------------------------------
-      # 11. Upload APK as GitHub Artifact (downloadable from Actions tab)
+      # 13. Upload APK as GitHub Artifact (downloadable from Actions tab)
       # -----------------------------------------------------------------------
       - name: "⬆️ Upload APK Artifact"
         if: github.event_name == 'push'
@@ -154,7 +166,7 @@ jobs:
           retention-days: 30
 
       # -----------------------------------------------------------------------
-      # 12. Upload AAB as GitHub Artifact (main branch only)
+      # 14. Upload AAB as GitHub Artifact (main branch only)
       # -----------------------------------------------------------------------
       - name: "⬆️ Upload AAB Artifact"
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -165,7 +177,7 @@ jobs:
           retention-days: 30
 
       # -----------------------------------------------------------------------
-      # 13. Prepare release notes with version info
+      # 15. Prepare release notes with version info
       # -----------------------------------------------------------------------
       - name: "📝 Prepare release notes"
         if: github.event_name == 'push'
@@ -195,7 +207,7 @@ jobs:
         shell: bash
 
       # -----------------------------------------------------------------------
-      # 14. Create or overwrite the single "Latest Build" GitHub Release
+      # 16. Create or overwrite the single "Latest Build" GitHub Release
       #     Uses built-in GITHUB_TOKEN — no PAT or secret needed
       # -----------------------------------------------------------------------
       - name: "🏷️ Publish Latest Build Release"
