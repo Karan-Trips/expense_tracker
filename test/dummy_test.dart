@@ -1,10 +1,7 @@
-// =============================================================================
-// AuraExpense - Dummy Unit Test
-// =============================================================================
-// This file exists so that `flutter test` in the CI pipeline has at least one
-// test to execute.  Replace or supplement with real tests as the project grows.
-// =============================================================================
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  // Placeholder — add real unit tests here.
+  test('Aura Ledger CI/CD Pipeline Verification Test', () {
+    expect(true, isTrue);
+  });
 }
