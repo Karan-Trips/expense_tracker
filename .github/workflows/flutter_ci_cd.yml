@@ -105,7 +105,7 @@ jobs:
           echo "GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}" >> .env
 
       # -----------------------------------------------------------------------
-      # 7. Verify .env exists and is populated
+      # 7. Verify .env exists and is populatedddd
       # -----------------------------------------------------------------------
       - name: Verify .env
         run: |
