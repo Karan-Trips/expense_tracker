@@ -33,7 +33,7 @@ class GeminiService {
       print('Initializing Gemini Service with API Key: $maskedKey');
 
       _visionModel = GenerativeModel(
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         apiKey: apiKey,
         generationConfig: GenerationConfig(
           responseMimeType: 'application/json',
@@ -71,7 +71,7 @@ class GeminiService {
       );
 
       _textModel = GenerativeModel(
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         apiKey: apiKey,
         systemInstruction: Content.system(
           'You are Aura, an elite AI Wealth Management Consultant. Your tone is motivating, strategic, and highly professional. You analyze transaction logs in Indian Rupees (INR) and deliver wealth-building strategies.',
